@@ -2,6 +2,23 @@
   <img src="assets/pdfrp/yazi-acik-800.png" alt="Pdfrp" width="400">
 </p>
 
+<p align="center"><b>Windows için Türkçe, açık kaynak PDF görüntüleyici ve düzenleyici</b></p>
+
+<p align="center">
+  <a href="https://github.com/ceceys/pdfrp/releases/latest"><img src="https://img.shields.io/github/v/release/ceceys/pdfrp?label=s%C3%BCr%C3%BCm&color=0b8a7f" alt="Son sürüm"></a>
+  <img src="https://img.shields.io/badge/Windows-10%20%7C%2011%20(64%20bit)-0078D4" alt="Windows 10 ve 11, 64 bit">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/lisans-MIT-1f6feb" alt="MIT lisansı"></a>
+</p>
+
+<h3 align="center">
+  <a href="https://github.com/ceceys/pdfrp/releases/download/v1.1.0/Pdfrp.Kurulum.1.1.0.exe">⬇ Pdfrp'yi indir</a>
+</h3>
+
+<p align="center">
+  Pdfrp 1.1.0 · Windows 10 ve 11, 64 bit · yaklaşık 26 MB<br>
+  <a href="https://github.com/ceceys/pdfrp/releases">Tüm sürümler</a> · <a href="#kurulum">Kurulum</a> · <a href="#english">English</a>
+</p>
+
 # Pdfrp
 
 Pdfrp, Windows için Türkçe arayüzlü, açık kaynak bir PDF görüntüleyici ve düzenleyicidir.
@@ -44,9 +61,11 @@ Araç düzeni, masaüstü PDF programlarına alışık kullanıcıların yadırg
 
 ## Kurulum
 
-1. [Releases](https://github.com/ceceys/pdfrp/releases) sayfasından son sürümün kurulum
-   dosyasını indirin (Windows 10 ya da 11, 64 bit). Sürüm sayfasında `Pdfrp Kurulum X.Y.Z.exe`
-   görünür; indirdiğiniz dosyanın adı `Pdfrp.Kurulum.X.Y.Z.exe` olabilir.
+1. Kurulum dosyasını indirin (Windows 10 ya da 11, 64 bit):
+   [Pdfrp 1.1.0](https://github.com/ceceys/pdfrp/releases/download/v1.1.0/Pdfrp.Kurulum.1.1.0.exe).
+   Bütün sürümler [Releases](https://github.com/ceceys/pdfrp/releases) sayfasındadır. Sürüm
+   sayfasında `Pdfrp Kurulum X.Y.Z.exe` görünür; indirdiğiniz dosyanın adı
+   `Pdfrp.Kurulum.X.Y.Z.exe` olabilir. Kurulu Pdfrp sonraki sürümleri kendisi bulur (aşağıda).
 2. İsterseniz dosyayı aynı sürümdeki `SHA256SUMS.txt` ile doğrulayın: dosyanın bulunduğu klasörde
    PowerShell'de `Get-FileHash -Algorithm SHA256 '.\Pdfrp*Kurulum*X.Y.Z.exe'` komutunu çalıştırın
    (iki adı da bulur). Verdiği değer, listede `Pdfrp Kurulum X.Y.Z.exe` satırındaki değerle
@@ -55,7 +74,9 @@ Araç düzeni, masaüstü PDF programlarına alışık kullanıcıların yadırg
    sorar; PDF dosyalarının varsayılan programını değiştirmez, Pdfrp'yi "Birlikte aç"
    listesine ekler.
 
-Kurulum dosyası kod imzalı değildir; Windows SmartScreen ilk çalıştırmada uyarı gösterebilir.
+Kurulum dosyası kod imzalı değildir; Windows SmartScreen ilk çalıştırmada "Windows bilgisayarınızı
+korudu" uyarısı gösterebilir. Dosyayı yukarıdaki gibi doğruladıysanız "Ek bilgi" ve ardından
+"Yine de çalıştır" ile devam edebilirsiniz.
 
 ## Güncelleme denetimi
 
@@ -115,8 +136,9 @@ own text recognition (when Windows' Turkish OCR feature is installed), converts 
 PowerPoint files to PDF when Microsoft Office is installed, and exports pages as JPEG, PNG or TIFF.
 The name comes from “Pdf For Friday”.
 
-- **Install:** download the installer from
-  [Releases](https://github.com/ceceys/pdfrp/releases). The release page shows
+- **Download:** [Pdfrp 1.1.0 installer](https://github.com/ceceys/pdfrp/releases/download/v1.1.0/Pdfrp.Kurulum.1.1.0.exe)
+  (Windows 10 or 11, 64-bit, about 26 MB). The installed app finds later versions by itself.
+- **Install:** all versions are on [Releases](https://github.com/ceceys/pdfrp/releases). The release page shows
   `Pdfrp Kurulum X.Y.Z.exe`; the file you download may be named
   `Pdfrp.Kurulum.X.Y.Z.exe`. To check it, run
   `Get-FileHash -Algorithm SHA256 '.\Pdfrp*Kurulum*X.Y.Z.exe'` in its folder (it finds either
