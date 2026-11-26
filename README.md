@@ -16,6 +16,7 @@
 
 <p align="center">
   Pdfrp 1.1.0 · Windows 10 ve 11, 64 bit · yaklaşık 26 MB<br>
+  macOS ve Linux sürümleri de eklenecektir.<br>
   <a href="https://github.com/ceceys/pdfrp/releases">Tüm sürümler</a> · <a href="#kurulum">Kurulum</a> · <a href="#english">English</a>
 </p>
 
@@ -138,6 +139,7 @@ The name comes from “Pdf For Friday”.
 
 - **Download:** [Pdfrp 1.1.0 installer](https://github.com/ceceys/pdfrp/releases/download/v1.1.0/Pdfrp.Kurulum.1.1.0.exe)
   (Windows 10 or 11, 64-bit, about 26 MB). The installed app finds later versions by itself.
+  macOS and Linux versions will be added.
 - **Install:** all versions are on [Releases](https://github.com/ceceys/pdfrp/releases). The release page shows
   `Pdfrp Kurulum X.Y.Z.exe`; the file you download may be named
   `Pdfrp.Kurulum.X.Y.Z.exe`. To check it, run
