@@ -1,0 +1,19 @@
+[package]
+name = "migez-preflight"
+description = "Standards: verify PDF/A (ISO 19005) conformance and convert documents to PDF/A-2b or 3b"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+migez-content = { workspace = true }
+migez-cos = { workspace = true }
+migez-model = { workspace = true }
+roxmltree = "0.21"
+
+[dev-dependencies]
+flate2 = { workspace = true }

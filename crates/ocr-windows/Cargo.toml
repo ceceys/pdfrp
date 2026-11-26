@@ -1,0 +1,33 @@
+[package]
+name = "migez-ocr-windows"
+description = "Scan & OCR: the text recognition built into Windows (Windows.Media.Ocr) as a recogniser, Turkish by default"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+[lints]
+workspace = true
+
+# Windows only: on every other platform the crate is empty (`#![cfg(windows)]` in src/lib.rs) and
+# has no dependencies.
+[target.'cfg(windows)'.dependencies]
+migez-ocr = { workspace = true }
+windows = { version = "0.62.2", features = [
+    "Foundation",
+    "Foundation_Collections",
+    "Globalization",
+    "Graphics_Imaging",
+    "Media_Ocr",
+    "Storage_Streams",
+] }
+# The async types (`IAsyncOperation`, its completion handler, `AsyncStatus`), which `windows`
+# 0.62 uses but does not re-export; the version `windows` 0.62.2 itself depends on.
+windows-future = "0.3.2"
+
+[target.'cfg(windows)'.dev-dependencies]
+# The tests set a Turkish line as a PDF page (migez-create), save it (migez-cos) and render
+# it to pixels (migez-render), the way the engine renders a page for recognition.
+migez-cos = { workspace = true }
+migez-create = { workspace = true }
+migez-render = { workspace = true }

@@ -1,0 +1,22 @@
+[package]
+name = "migez-update"
+description = "Pdfrp's update check: the latest GitHub release, its installer and the installer's SHA-256"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+# The GitHub API's release (`releases/latest`).
+serde_json = { workspace = true }
+log = { workspace = true }
+# The installer's SHA-256 against the release's SHA256SUMS.txt; the sha2 the other crates use.
+sha2 = "0.11"
+
+[target.'cfg(windows)'.dependencies]
+# HTTPS to GitHub, blocking, on the checker's own thread. Already in the tree through the printing
+# stack (winprint) with the same features: rustls, the Windows certificate store, the system proxy.
+reqwest = { version = "0.13", features = ["blocking"] }

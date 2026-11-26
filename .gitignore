@@ -1,0 +1,15 @@
+*~
+plan/
+/target
+/dist
+/corpus
+/log
+.DS_Store
+/fuzz-out
+/assets/models
+# A craft-fonts checkout used as the optional MIGEZ_FONTS_DIR build input (CI and releases put it here).
+/craft-fonts
+.claude/
+# Pdfrp: the installer (ISCC output) and the generated third-party licence list.
+/setup
+/kurulum/cikti

@@ -1,0 +1,17 @@
+[package]
+name = "migez-a11y"
+description = "Accessibility: the Accessibility Checker (32 rules), its report and fixes"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+migez-cos = { workspace = true }
+migez-model = { workspace = true }
+migez-content = { workspace = true }
+migez-fonts = { workspace = true }
+thiserror.workspace = true

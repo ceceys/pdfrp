@@ -1,0 +1,19 @@
+[package]
+name = "migez-audit"
+description = "Verification tooling: audit documents for faux redactions (opaque covers over extractable text)"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+migez-cos = { workspace = true }
+migez-content = { workspace = true }
+migez-edit = { workspace = true }
+migez-model = { workspace = true }
+thiserror = { workspace = true }
+
+[dev-dependencies]

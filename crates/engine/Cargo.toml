@@ -1,0 +1,71 @@
+[package]
+name = "migez-engine"
+description = "Pdfrp engine façade: session, documents, command/tool catalogue"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+craft-docpath = { workspace = true }
+migez-measure = { workspace = true }
+image = { version = "0.25", default-features = false, features = ["png", "jpeg", "tiff"] }
+migez-render = { workspace = true }
+migez-cos = { workspace = true }
+migez-organize = { workspace = true }
+migez-annot = { workspace = true }
+migez-forms = { workspace = true }
+migez-xfa = { workspace = true }
+migez-edit = { workspace = true }
+migez-content = { workspace = true }
+migez-audit = { workspace = true }
+migez-redact = { workspace = true }
+migez-print = { workspace = true }
+migez-xfdf = { workspace = true }
+migez-sign = { workspace = true }
+migez-optimize = { workspace = true }
+migez-a11y = { workspace = true }
+migez-ocr = { workspace = true }
+migez-js = { workspace = true }
+migez-compare = { workspace = true }
+migez-preflight = { workspace = true }
+migez-export = { workspace = true }
+migez-fonts = { workspace = true }
+migez-create = { workspace = true }
+migez-model = { workspace = true }
+migez-geom = { workspace = true }
+# Pdfrp: Word, Excel and PowerPoint to PDF and PDF to Word through an installed Microsoft
+# Office (COM). It builds everywhere; off Windows every conversion says it needs Windows.
+migez-office = { workspace = true }
+thiserror = { workspace = true }
+png = "0.18"
+# Already in the graph (through image and migez-create): image's TiffEncoder can't set the
+# resolution or the compression of an exported page.
+tiff = "0.11"
+# Already in the graph (url and idna through webbrowser, icu_properties through boa): they show
+# the host of a document's link the way the browser reads it (links::display_host).
+url = "2.5"
+idna = "1.1"
+icu_properties = "2.3"
+unicode-segmentation = "1.13"
+
+[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+# Already in the graph through lopdf; used only for the local UTC offset ("today"). The workspace
+# entry is std-only; this target adds `clock` for `chrono::Local::now`.
+chrono = { workspace = true, features = ["clock"] }
+getrandom = "0.4"
+
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+getrandom = { version = "0.4", features = ["wasm_js"] }
+
+# Pdfrp: Windows' own text recognition (Windows.Media.Ocr), the OCR engine that reads
+# Turkish. The crate is empty on every other platform.
+[target.'cfg(windows)'.dependencies]
+migez-ocr-windows = { workspace = true }
+
+[dev-dependencies]
+migez-testkit = { workspace = true }
+# JBIG2 fixtures (`encode_jbig2_generic`).
+migez-filters = { workspace = true }

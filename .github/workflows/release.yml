@@ -1,0 +1,143 @@
+# Pdfrp sürümü: `v1.2.3` biçiminde bir etiket gönderilince Windows kurulum dosyasını derler ve
+# GitHub Releases'ta "Pdfrp 1.2.3" başlıklı sürümü iki dosyayla yayımlar:
+#   Pdfrp Kurulum 1.2.3.exe   (Inno Setup 6, kurulum/pdfrp.iss)
+#   SHA256SUMS.txt                 (programın güncelleme denetimi kurulumu bununla doğrular)
+#
+# Araç zinciri: x86_64-pc-windows-msvc. windows-latest'te Visual Studio Build Tools ve Windows SDK
+# (rc.exe) hazır geliyor, Rust'ın Windows'taki birincil hedefi bu, ve üst kaynak sürümlerini de
+# MSVC ile derliyordu (packaging/windows/package.ps1). Yerelde kullanılan GNU araç zinciri
+# (WinLibs MinGW) koşucuda hazır değil; indirilip kurulması ek bir dış kaynak ve kırılma noktası
+# olurdu. C çalışma zamanı statik bağlanır (+crt-static): kurulum Visual C++ yeniden dağıtılabilir
+# paketini istemez.
+#
+# Derleme yerel sürüm derlemesiyle aynı ayarlarla yapılır: LTO kapalı, 16 kod üretim birimi.
+# Çeviriler depodaki i18n/ klasöründen gömülür; craft-fonts kullanılmaz (NOTICE).
+#
+# Eylemler sürüm etiketiyle değil, işleme (commit) SHA'sıyla sabitlenir; yorumdaki sürüm yalnız
+# okuyan içindir. Depo alındıktan sonra GitHub jetonu diske yazılmaz (persist-credentials: false):
+# derleme betikleri onu okuyamaz; jeton yalnız son adımda (Sürümü yayımla) ortam değişkeniyle verilir.
+
+name: Sürüm
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: windows-latest
+    timeout-minutes: 240
+    env:
+      CARGO_TERM_COLOR: always
+      CARGO_INCREMENTAL: '0'
+      # Etiket adı betiğe yapıştırılmaz, ortam değişkeninden okunur.
+      TAG: ${{ github.ref_name }}
+      RUST_TOOLCHAIN: '1.100.0'
+      TARGET: x86_64-pc-windows-msvc
+      # Sürüm derlemesi çevirisiz ya da simgesiz exe üretmesin.
+      MIGEZ_I18N_REQUIRED: '1'
+      MIGEZ_REQUIRE_WINRES: '1'
+      # Yerel -HizliSurum ile aynı: LTO kapalı, 16 kod üretim birimi.
+      CARGO_PROFILE_RELEASE_LTO: 'off'
+      CARGO_PROFILE_RELEASE_CODEGEN_UNITS: '16'
+      CARGO_TARGET_X86_64_PC_WINDOWS_MSVC_RUSTFLAGS: '-C target-feature=+crt-static'
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - name: Depoyu al
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          persist-credentials: false
+
+      - name: Sürüm numaralarını denetle
+        run: |
+          $tag = $env:TAG
+          if ($tag -notmatch '^v(\d+\.\d+\.\d+)$') { throw "Etiket v1.2.3 biçiminde olmalı: $tag" }
+          $version = $Matches[1]
+          $inPkg = $false; $cargo = $null
+          foreach ($line in Get-Content Cargo.toml) {
+            if ($line -match '^\s*\[') { $inPkg = ($line.Trim() -eq '[workspace.package]'); continue }
+            if ($inPkg -and $line -match '^\s*version\s*=\s*"([^"]+)"') { $cargo = $Matches[1]; break }
+          }
+          $iss = (Select-String -Path kurulum/pdfrp.iss -Pattern '#define AppVersion "([^"]+)"').Matches[0].Groups[1].Value
+          "Etiket $version, Cargo $cargo, kurulum $iss"
+          if ($cargo -ne $version -or $iss -ne $version) { throw "Etiket, Cargo.toml ve kurulum/pdfrp.iss aynı sürümü söylemeli." }
+          "VERSION=$version" >> $env:GITHUB_ENV
+
+      - name: Rust araç zinciri
+        run: |
+          rustup toolchain install $env:RUST_TOOLCHAIN --profile minimal --target $env:TARGET
+          rustup default $env:RUST_TOOLCHAIN
+          rustc --version
+          cargo --version
+
+      - name: Cargo önbelleği
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        with:
+          path: |
+            ~/.cargo/registry/index
+            ~/.cargo/registry/cache
+            ~/.cargo/git/db
+          key: cargo-${{ runner.os }}-${{ hashFiles('Cargo.lock') }}
+
+      - name: Bağımlılıkları indir
+        run: cargo fetch --locked
+
+      - name: Güncelleme denetiminin sınamaları
+        run: cargo test --locked --offline -p migez-update --target $env:TARGET
+
+      - name: Sürüm derlemesi
+        run: cargo build --release --locked --offline -p migez-pdf --target $env:TARGET
+
+      - name: Exe'yi denetle
+        run: |
+          $exe = "target/$env:TARGET/release/migez-pdf.exe"
+          $bytes = [IO.File]::ReadAllBytes($exe)
+          $pe = [BitConverter]::ToInt32($bytes, 0x3C)
+          $machine = [BitConverter]::ToUInt16($bytes, $pe + 4)
+          $subsystem = [BitConverter]::ToUInt16($bytes, $pe + 0x5C)
+          if ($machine -ne 0x8664 -or $subsystem -ne 2) { throw "migez-pdf.exe x64 GUI değil (makine 0x$('{0:X}' -f $machine), alt sistem $subsystem)" }
+          $info = (Get-Item $exe).VersionInfo
+          "Ürün: $($info.ProductName) $($info.ProductVersion), dosya sürümü $($info.FileVersion)"
+          if ($info.ProductVersion -ne $env:VERSION) { throw "Exe'nin ürün sürümü $($info.ProductVersion), beklenen $env:VERSION" }
+
+      - name: Üçüncü taraf lisans listesi
+        run: ./kurulum/lisans-listesi.ps1 -Hedefler $env:TARGET
+
+      # Sürüm sabit. Yerel kurulum dosyası Inno Setup 6.7.3 ile derlendi; Chocolatey'deki en yeni
+      # innosetup paketi 6.7.1 (6.7.3 orada yok, 26.11.2026).
+      - name: Inno Setup'ı kur
+        run: choco install innosetup --version 6.7.1 --no-progress -y
+
+      - name: Kurulum dosyasını derle
+        run: |
+          $iscc = @(
+            (Join-Path ${env:ProgramFiles(x86)} 'Inno Setup 6\ISCC.exe'),
+            (Join-Path $env:ProgramFiles 'Inno Setup 6\ISCC.exe')
+          ) | Where-Object { Test-Path $_ } | Select-Object -First 1
+          if (-not $iscc) { $iscc = (Get-Command iscc.exe -ErrorAction Stop).Source }
+          & $iscc "/DSurum=$PWD\target\$env:TARGET\release" "/DAppVersion=$env:VERSION" kurulum\pdfrp.iss
+          if ($LASTEXITCODE -ne 0) { throw "ISCC çıkış kodu $LASTEXITCODE" }
+
+      - name: SHA256SUMS.txt
+        run: |
+          $name = "Pdfrp Kurulum $env:VERSION.exe"
+          $hash = (Get-FileHash -Algorithm SHA256 -LiteralPath "setup/$name").Hash.ToLowerInvariant()
+          [IO.File]::WriteAllText("$PWD/setup/SHA256SUMS.txt", "$hash  $name`n", [Text.UTF8Encoding]::new($false))
+          Get-Content setup/SHA256SUMS.txt
+
+      - name: Sürümü yayımla
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $name = "Pdfrp Kurulum $env:VERSION.exe"
+          $notes = "Kurulum: ``$name`` (Windows 10/11, 64 bit; indirilen dosyanın adı ``Pdfrp.Kurulum.$env:VERSION.exe`` olabilir). Dosyayı ``SHA256SUMS.txt`` ile doğrulayabilirsiniz: ``Get-FileHash -Algorithm SHA256``. Yüklü Pdfrp bu sürümü Yardım > Güncellemeleri denetle… ile ya da açılıştaki denetimle bulur."
+          gh release create $env:TAG "setup/$name#$name" setup/SHA256SUMS.txt --title "Pdfrp $env:VERSION" --notes $notes --verify-tag

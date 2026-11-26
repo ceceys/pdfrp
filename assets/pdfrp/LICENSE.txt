@@ -1,0 +1,48 @@
+Pdfrp adı ve logosu
+
+Bu klasördeki simge ve yazı logosu dosyaları (simge.svg, simge-256.png, pdfrp.ico,
+yazi-acik-800.png, yazi-koyu-800.png) ile "Pdfrp" adı, Cuma Ali Dirik'in yürüttüğü
+Pdfrp projesini tanıtır. Logo bu proje için bir yapay zekâ aracıyla üretilmiştir;
+kaynağı ATTRIBUTION.md dosyasındadır.
+
+Ad ve logo, deponun MIT lisansının (LICENSE, LICENSE-MIT) kapsamında değildir. Bu kısıt yalnız
+ad ve logo içindir; MIT lisansının kaynak koda tanıdığı hakları daraltmaz. Bu dosyada verilen
+izinler dışında ad ve logo üzerindeki haklar saklıdır.
+
+İzin verilenler:
+- Ad ve logo, Pdfrp programıyla birlikte, değiştirilmeden dağıtılabilir.
+- Ad, Pdfrp'den söz etmek için düz yazıyla kullanılabilir.
+
+Değiştirilmiş sürümler (çatallar) dağıtılırken ad ve logo çıkarılır ya da değiştirilir.
+Değiştirilmiş bir sürüm Pdfrp diye adlandırılamaz ve Pdfrp projesinin ürünü gibi
+sunulamaz; Pdfrp'ye dayandığı düz yazıyla belirtilebilir. Kaynak koddaki iç adlar (paket,
+modül ve değişken adları) ile lisans ve atıf dosyalarında (LICENSE, LICENSE-MIT, NOTICE,
+ATTRIBUTION.md) geçen ad olduğu gibi kalabilir.
+
+Ad ve logo, başka bir ürünü tanıtmak ya da adlandırmak için kullanılamaz.
+
+---
+
+The Pdfrp name and logo
+
+The icon and wordmark files in this folder (simge.svg, simge-256.png, pdfrp.ico,
+yazi-acik-800.png, yazi-koyu-800.png) and the name "Pdfrp" identify the Pdfrp project
+run by Cuma Ali Dirik. The logo was made for this project with an AI tool; its source is given in
+ATTRIBUTION.md.
+
+The name and the logo are not covered by the MIT License of this repository (LICENSE,
+LICENSE-MIT). This restriction applies to the name and the logo only; it does not narrow the
+rights the MIT License grants for the source code. Any rights in the name and the logo are
+reserved, except for the permissions given in this file.
+
+Permitted:
+- The name and the logo may be distributed unmodified together with the Pdfrp program.
+- The name may be used in plain text to refer to Pdfrp.
+
+Modified versions (forks) must remove or replace the name and the logo when they are
+distributed. A modified version may not be called Pdfrp or be presented as a product of the
+Pdfrp project; it may say, in plain text, that it is based on Pdfrp. Internal names in
+the source code (package, module and variable names) and the name as it appears in the licence
+and attribution files (LICENSE, LICENSE-MIT, NOTICE, ATTRIBUTION.md) may stay as they are.
+
+The name and the logo may not be used to promote or to name any other product.

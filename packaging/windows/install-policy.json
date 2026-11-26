@@ -1,0 +1,328 @@
+{
+  "id": "migez-pdf",
+  "name": "Pdfrp",
+  "upgradeCode": "EA00C367-7270-4C50-9D8B-A7A5C88AD27F",
+  "sources": [
+    "migez-pdf.wxs",
+    "installer-ui.wxs"
+  ],
+  "icon": "assets/pdfrp/pdfrp.ico",
+  "localization": [],
+  "extensions": [],
+  "payloads": [
+    "LICENSE-APACHE-upstream.txt",
+    "LICENSE-MIT",
+    "NOTICE",
+    "migez-cli.exe",
+    "migez-pdf.exe"
+  ],
+  "registry": [
+    [
+      "-1",
+      "Software\\Microsoft\\Windows\\CurrentVersion\\App Paths\\migez-pdf.exe",
+      "",
+      "[#MigezExe]"
+    ],
+    [
+      "-1",
+      "Software\\Classes\\MigEZPdf.Document",
+      "",
+      "PDF Document"
+    ],
+    [
+      "-1",
+      "Software\\Classes\\MigEZPdf.Document\\DefaultIcon",
+      "",
+      "\"[#MigezExe]\",0"
+    ],
+    [
+      "-1",
+      "Software\\Classes\\MigEZPdf.Document\\shell\\open\\command",
+      "",
+      "\"[#MigezExe]\" \"%1\""
+    ],
+    [
+      "-1",
+      "Software\\Classes\\MigEZPdf.Document",
+      "TypeOverlay",
+      ""
+    ],
+    [
+      "-1",
+      "Software\\Classes\\.pdf\\OpenWithProgids",
+      "MigEZPdf.Document",
+      ""
+    ],
+    [
+      "-1",
+      "Software\\Classes\\Applications\\migez-pdf.exe",
+      "FriendlyAppName",
+      "Pdfrp"
+    ],
+    [
+      "-1",
+      "Software\\Classes\\Applications\\migez-pdf.exe\\DefaultIcon",
+      "",
+      "\"[#MigezExe]\",0"
+    ],
+    [
+      "-1",
+      "Software\\Classes\\Applications\\migez-pdf.exe\\SupportedTypes",
+      ".pdf",
+      ""
+    ],
+    [
+      "-1",
+      "Software\\Classes\\Applications\\migez-pdf.exe\\shell\\open\\command",
+      "",
+      "\"[#MigezExe]\" \"%1\""
+    ],
+    [
+      "-1",
+      "Software\\Pdfrp\\Capabilities",
+      "ApplicationName",
+      "Pdfrp"
+    ],
+    [
+      "-1",
+      "Software\\Pdfrp\\Capabilities",
+      "ApplicationDescription",
+      "Open-source PDF workbench"
+    ],
+    [
+      "-1",
+      "Software\\Pdfrp\\Capabilities",
+      "ApplicationIcon",
+      "[#MigezExe],0"
+    ],
+    [
+      "-1",
+      "Software\\Pdfrp\\Capabilities\\FileAssociations",
+      ".pdf",
+      "MigEZPdf.Document"
+    ],
+    [
+      "-1",
+      "Software\\RegisteredApplications",
+      "Pdfrp",
+      "Software\\Pdfrp\\Capabilities"
+    ],
+    [
+      "-1",
+      "Software\\Pdfrp\\Shortcuts",
+      "StartMenu",
+      "#1"
+    ],
+    [
+      "-1",
+      "Software\\Pdfrp\\Shortcuts",
+      "Desktop",
+      "#1"
+    ],
+    [
+      "-1",
+      "Software\\Classes\\SystemFileAssociations\\.pdf\\shell\\MigEZPdf.Edit",
+      "",
+      "Edit with Pdfrp"
+    ],
+    [
+      "-1",
+      "Software\\Classes\\SystemFileAssociations\\.pdf\\shell\\MigEZPdf.Edit",
+      "Icon",
+      "\"[#MigezExe]\",0"
+    ],
+    [
+      "-1",
+      "Software\\Classes\\SystemFileAssociations\\.pdf\\shell\\MigEZPdf.Edit",
+      "MultiSelectModel",
+      "Document"
+    ],
+    [
+      "-1",
+      "Software\\Classes\\SystemFileAssociations\\.pdf\\shell\\MigEZPdf.Edit\\command",
+      "",
+      "\"[#MigezExe]\" \"%1\""
+    ],
+    [
+      "-1",
+      "Software\\Classes\\SystemFileAssociations\\.png\\shell\\MigEZPdf.CreatePdf",
+      "",
+      "Create PDF with Pdfrp\u2026"
+    ],
+    [
+      "-1",
+      "Software\\Classes\\SystemFileAssociations\\.png\\shell\\MigEZPdf.CreatePdf",
+      "MultiSelectModel",
+      "Single"
+    ],
+    [
+      "-1",
+      "Software\\Classes\\SystemFileAssociations\\.png\\shell\\MigEZPdf.CreatePdf\\command",
+      "",
+      "\"[#MigezExe]\" --create-images \"%1\""
+    ],
+    [
+      "-1",
+      "Software\\Classes\\SystemFileAssociations\\.jpg\\shell\\MigEZPdf.CreatePdf",
+      "",
+      "Create PDF with Pdfrp\u2026"
+    ],
+    [
+      "-1",
+      "Software\\Classes\\SystemFileAssociations\\.jpg\\shell\\MigEZPdf.CreatePdf",
+      "MultiSelectModel",
+      "Single"
+    ],
+    [
+      "-1",
+      "Software\\Classes\\SystemFileAssociations\\.jpg\\shell\\MigEZPdf.CreatePdf\\command",
+      "",
+      "\"[#MigezExe]\" --create-images \"%1\""
+    ],
+    [
+      "-1",
+      "Software\\Classes\\SystemFileAssociations\\.jpeg\\shell\\MigEZPdf.CreatePdf",
+      "",
+      "Create PDF with Pdfrp\u2026"
+    ],
+    [
+      "-1",
+      "Software\\Classes\\SystemFileAssociations\\.jpeg\\shell\\MigEZPdf.CreatePdf",
+      "MultiSelectModel",
+      "Single"
+    ],
+    [
+      "-1",
+      "Software\\Classes\\SystemFileAssociations\\.jpeg\\shell\\MigEZPdf.CreatePdf\\command",
+      "",
+      "\"[#MigezExe]\" --create-images \"%1\""
+    ],
+    [
+      "-1",
+      "Software\\Classes\\SystemFileAssociations\\.tif\\shell\\MigEZPdf.CreatePdf",
+      "",
+      "Create PDF with Pdfrp\u2026"
+    ],
+    [
+      "-1",
+      "Software\\Classes\\SystemFileAssociations\\.tif\\shell\\MigEZPdf.CreatePdf",
+      "MultiSelectModel",
+      "Single"
+    ],
+    [
+      "-1",
+      "Software\\Classes\\SystemFileAssociations\\.tif\\shell\\MigEZPdf.CreatePdf\\command",
+      "",
+      "\"[#MigezExe]\" --create-images \"%1\""
+    ],
+    [
+      "-1",
+      "Software\\Classes\\SystemFileAssociations\\.tiff\\shell\\MigEZPdf.CreatePdf",
+      "",
+      "Create PDF with Pdfrp\u2026"
+    ],
+    [
+      "-1",
+      "Software\\Classes\\SystemFileAssociations\\.tiff\\shell\\MigEZPdf.CreatePdf",
+      "MultiSelectModel",
+      "Single"
+    ],
+    [
+      "-1",
+      "Software\\Classes\\SystemFileAssociations\\.tiff\\shell\\MigEZPdf.CreatePdf\\command",
+      "",
+      "\"[#MigezExe]\" --create-images \"%1\""
+    ],
+    [
+      "-1",
+      "Software\\Classes\\SystemFileAssociations\\.gif\\shell\\MigEZPdf.CreatePdf",
+      "",
+      "Create PDF with Pdfrp\u2026"
+    ],
+    [
+      "-1",
+      "Software\\Classes\\SystemFileAssociations\\.gif\\shell\\MigEZPdf.CreatePdf",
+      "MultiSelectModel",
+      "Single"
+    ],
+    [
+      "-1",
+      "Software\\Classes\\SystemFileAssociations\\.gif\\shell\\MigEZPdf.CreatePdf\\command",
+      "",
+      "\"[#MigezExe]\" --create-images \"%1\""
+    ],
+    [
+      "-1",
+      "Software\\Classes\\SystemFileAssociations\\.bmp\\shell\\MigEZPdf.CreatePdf",
+      "",
+      "Create PDF with Pdfrp\u2026"
+    ],
+    [
+      "-1",
+      "Software\\Classes\\SystemFileAssociations\\.bmp\\shell\\MigEZPdf.CreatePdf",
+      "MultiSelectModel",
+      "Single"
+    ],
+    [
+      "-1",
+      "Software\\Classes\\SystemFileAssociations\\.bmp\\shell\\MigEZPdf.CreatePdf\\command",
+      "",
+      "\"[#MigezExe]\" --create-images \"%1\""
+    ],
+    [
+      "-1",
+      "Software\\Classes\\SystemFileAssociations\\.jp2\\shell\\MigEZPdf.CreatePdf",
+      "",
+      "Create PDF with Pdfrp\u2026"
+    ],
+    [
+      "-1",
+      "Software\\Classes\\SystemFileAssociations\\.jp2\\shell\\MigEZPdf.CreatePdf",
+      "MultiSelectModel",
+      "Single"
+    ],
+    [
+      "-1",
+      "Software\\Classes\\SystemFileAssociations\\.jp2\\shell\\MigEZPdf.CreatePdf\\command",
+      "",
+      "\"[#MigezExe]\" --create-images \"%1\""
+    ],
+    [
+      "-1",
+      "Software\\Classes\\SystemFileAssociations\\.j2k\\shell\\MigEZPdf.CreatePdf",
+      "",
+      "Create PDF with Pdfrp\u2026"
+    ],
+    [
+      "-1",
+      "Software\\Classes\\SystemFileAssociations\\.j2k\\shell\\MigEZPdf.CreatePdf",
+      "MultiSelectModel",
+      "Single"
+    ],
+    [
+      "-1",
+      "Software\\Classes\\SystemFileAssociations\\.j2k\\shell\\MigEZPdf.CreatePdf\\command",
+      "",
+      "\"[#MigezExe]\" --create-images \"%1\""
+    ],
+    [
+      "-1",
+      "Software\\Classes\\SystemFileAssociations\\.jpx\\shell\\MigEZPdf.CreatePdf",
+      "",
+      "Create PDF with Pdfrp\u2026"
+    ],
+    [
+      "-1",
+      "Software\\Classes\\SystemFileAssociations\\.jpx\\shell\\MigEZPdf.CreatePdf",
+      "MultiSelectModel",
+      "Single"
+    ],
+    [
+      "-1",
+      "Software\\Classes\\SystemFileAssociations\\.jpx\\shell\\MigEZPdf.CreatePdf\\command",
+      "",
+      "\"[#MigezExe]\" --create-images \"%1\""
+    ]
+  ],
+  "mode": "dualScope"
+}

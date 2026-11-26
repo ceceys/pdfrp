@@ -1,0 +1,18 @@
+[package]
+name = "migez-organize"
+description = "Page and document-structure edits: rotate, delete, move, insert pages; document info"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+migez-content = { workspace = true }
+migez-cos = { workspace = true }
+thiserror = { workspace = true }
+
+[dev-dependencies]
+migez-oracle = { workspace = true }
+hayro-syntax = { workspace = true }

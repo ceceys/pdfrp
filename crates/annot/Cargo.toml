@@ -1,0 +1,20 @@
+[package]
+name = "migez-annot"
+description = "Annotations (comments): builders, appearance streams and edits, ISO 32000-2 §12.5"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+migez-cos = { workspace = true }
+migez-fonts = { workspace = true }
+# The usable-quad rule `/QuadPoints` readers share.
+migez-geom = { workspace = true }
+migez-model = { workspace = true }
+thiserror = { workspace = true }
+
+[dev-dependencies]
+hayro-syntax = { workspace = true }

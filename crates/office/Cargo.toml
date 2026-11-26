@@ -1,0 +1,32 @@
+[package]
+name = "migez-office"
+description = "Word, Excel and PowerPoint to PDF, and PDF to Word, through an installed Microsoft Office (Windows, COM automation)"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+# `[lints] workspace = true` değil: çalışma alanı unsafe kodu yasaklıyor (forbid), Office otomasyonu
+# ise COM'dan geçiyor ve adlı ya da eksik bağımsız değişken verebilen, Office'ten dönen boş nesnede
+# çökmeyen güvenli bir bağlama yok (README, "unsafe"). Aşağıdakiler çalışma alanının lint'leri, tek
+# farkla: unsafe kod yasak değil reddedilir (deny), böylece yalnız `src/com.rs` izin verebilir; her
+# unsafe blok neden güvenli olduğunu yazmak zorunda. Bu istisna sahibin onayını ister.
+[lints.rust]
+unsafe_code = "deny"
+
+[lints.clippy]
+cognitive_complexity = "deny"
+too_many_arguments = "deny"
+wildcard_imports = "deny"
+dbg_macro = "warn"
+todo = "warn"
+undocumented_unsafe_blocks = "deny"
+
+[target.'cfg(windows)'.dependencies]
+# Dönüştürmeyi bozmayan temizlik hataları (kapatma, çıkış, geçici dosya) günlüğe yazılır.
+log = { workspace = true }
+# IDispatch ile geç bağlama: COM başlatma, GetIDsOfNames/Invoke ve VARIANT. Ağaçta zaten var (wgpu,
+# uygulamanın WinRT çağrıları); COM otomasyonunun gerektirdiği üç ad alanı açılıyor.
+windows = { version = "0.62", default-features = false, features = ["std", "Win32_System_Com", "Win32_System_Ole", "Win32_System_Variant"] }
+# `mevcut()` ProgID kayıtlarını bu güvenli kayıt defteri API'siyle okur, Office'i başlatmadan.
+# Ağaçta zaten var (craft-i18n).
+windows-registry = "0.6"

@@ -1,0 +1,74 @@
+[
+  {
+    "crate": "migez-cli",
+    "name": "hyper",
+    "reachable": true,
+    "path": "migez-cli -> migez-engine -> migez-print -> craft-print -> winprint -> reqwest -> hyper"
+  },
+  {
+    "crate": "migez-cli",
+    "name": "reqwest",
+    "reachable": true,
+    "path": "migez-cli -> migez-engine -> migez-print -> craft-print -> winprint -> reqwest"
+  },
+  {
+    "crate": "migez-cli",
+    "name": "socket2",
+    "reachable": true,
+    "path": "migez-cli -> migez-engine -> migez-print -> craft-print -> winprint -> reqwest -> hyper-util -> socket2"
+  },
+  {
+    "crate": "migez-cli",
+    "name": "tokio",
+    "reachable": true,
+    "path": "migez-cli -> migez-engine -> migez-print -> craft-print -> winprint -> reqwest -> tokio"
+  },
+  {
+    "crate": "migez-automation",
+    "name": "hyper",
+    "reachable": true,
+    "path": "migez-automation -> migez-engine -> migez-print -> craft-print -> winprint -> reqwest -> hyper"
+  },
+  {
+    "crate": "migez-automation",
+    "name": "reqwest",
+    "reachable": true,
+    "path": "migez-automation -> migez-engine -> migez-print -> craft-print -> winprint -> reqwest"
+  },
+  {
+    "crate": "migez-automation",
+    "name": "socket2",
+    "reachable": true,
+    "path": "migez-automation -> migez-engine -> migez-print -> craft-print -> winprint -> reqwest -> hyper-util -> socket2"
+  },
+  {
+    "crate": "migez-automation",
+    "name": "tokio",
+    "reachable": true,
+    "path": "migez-automation -> migez-engine -> migez-print -> craft-print -> winprint -> reqwest -> tokio"
+  },
+  {
+    "crate": "migez-engine",
+    "name": "hyper",
+    "reachable": true,
+    "path": "migez-engine -> migez-print -> craft-print -> winprint -> reqwest -> hyper"
+  },
+  {
+    "crate": "migez-engine",
+    "name": "reqwest",
+    "reachable": true,
+    "path": "migez-engine -> migez-print -> craft-print -> winprint -> reqwest"
+  },
+  {
+    "crate": "migez-engine",
+    "name": "socket2",
+    "reachable": true,
+    "path": "migez-engine -> migez-print -> craft-print -> winprint -> reqwest -> hyper-util -> socket2"
+  },
+  {
+    "crate": "migez-engine",
+    "name": "tokio",
+    "reachable": true,
+    "path": "migez-engine -> migez-print -> craft-print -> winprint -> reqwest -> tokio"
+  }
+]
