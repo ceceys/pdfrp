@@ -75,6 +75,11 @@ struct Pending {
     overwrite_now: bool,
     overwrite_elsewhere: bool,
     lock_answer: Option<bool>,
+    /// Pdfrp: convert the signed UDF file waiting behind `Dialog::UdfSigned`.
+    udf_convert: bool,
+    /// Pdfrp 1.2.0: the answer to `Dialog::TranslateDownload` (Download is `true`).
+    #[cfg_attr(target_arch = "wasm32", allow(dead_code))]
+    translate_download: Option<bool>,
     summarize_now: bool,
     optimize_now: bool,
     duplicate_now: Option<Edit>,
@@ -98,10 +103,18 @@ pub fn show(app: &mut MigezApp, ctx: &egui::Context) {
     // The page sets hover cursors from the raw pointer position (form fields, links, comments)
     // before any dialog is drawn, and nothing under a modal's backdrop takes clicks. Start from
     // the arrow; the modal's own widgets set theirs as they are drawn.
+    // Pdfrp: a signed UDF file waits for its question until no other is asked.
+    if !app.pending_udf.is_empty() && !app.modal_open() {
+        app.dialog = Some(Dialog::UdfSigned);
+    }
     if app.modal_open() || ctx.memory(|m| m.top_modal_layer().is_some()) {
         ctx.set_cursor_icon(egui::CursorIcon::Default);
     }
     dialogs(app, ctx);
+    // The next signed UDF file asks on the next frame, without waiting for the pointer to move.
+    if !app.pending_udf.is_empty() && app.dialog.is_none() {
+        ctx.request_repaint();
+    }
     // Above Document Properties when Security's Unlock… asked for it; script prompts stay on top.
     unlock(app, ctx);
     #[cfg(not(target_arch = "wasm32"))]
@@ -310,6 +323,16 @@ fn dialog_body(ui: &mut egui::Ui, app: &mut MigezApp, dialog: Dialog, req: &mut 
         }
         Dialog::LockSignatures => {
             if !dialog_lock_signatures(ui, app, req) {
+                return false;
+            }
+        }
+        Dialog::UdfSigned => {
+            if !dialog_udf_signed(ui, app, req) {
+                return false;
+            }
+        }
+        Dialog::TranslateDownload => {
+            if !dialog_translate_download(ui, app, req) {
                 return false;
             }
         }
@@ -1355,6 +1378,47 @@ fn dialog_lock_signatures(ui: &mut egui::Ui, app: &mut MigezApp, req: &mut Pendi
     false
 }
 
+/// Pdfrp: `Dialog::UdfSigned` content: before a UDF file with an electronic signature is
+/// converted, what the PDF will and won't be. Returns `false`: it has its own buttons.
+fn dialog_udf_signed(ui: &mut egui::Ui, app: &mut MigezApp, req: &mut Pending) -> bool {
+    let name = app.pending_udf.front().map(|p| p.name.clone()).unwrap_or_default();
+    ui.label(egui::RichText::new(name).font(theme::semibold(18.0)));
+    ui.add_space(8.0);
+    ui.label(tl!(crate::create_ui::UDF_SIGNED_NOTE));
+    ui.add_space(12.0);
+    ui.with_layout(Layout::right_to_left(Align::Center), |ui| {
+        if widgets::pill_button(ui, tl!("Convert to PDF"), true).clicked() {
+            req.udf_convert = true;
+            req.close = true;
+        }
+        if widgets::pill_button(ui, tl!("Cancel"), false).clicked() {
+            req.close = true;
+        }
+    });
+    false
+}
+
+/// Pdfrp 1.2.0: `Dialog::TranslateDownload` content: a language module the translation (or
+/// Preferences' Download) needs isn't installed; download it? (The legal review's wording,
+/// `translate::download_dialog`.) Returns `false`: it has its own buttons.
+fn dialog_translate_download(ui: &mut egui::Ui, app: &mut MigezApp, req: &mut Pending) -> bool {
+    #[cfg(not(target_arch = "wasm32"))]
+    {
+        if app.translation_download_question().is_none() {
+            req.close = true;
+        } else if let Some(download) = crate::translate::download_dialog(ui, app) {
+            req.translate_download = Some(download);
+            req.close = true;
+        }
+    }
+    #[cfg(target_arch = "wasm32")]
+    {
+        let _ = (ui, app);
+        req.close = true;
+    }
+    false
+}
+
 /// `Dialog::Revert` content. Returns `false` when it has its own buttons and no footer is wanted.
 fn dialog_revert(ui: &mut egui::Ui, app: &mut MigezApp, req: &mut Pending) -> bool {
     let name = app.active_ids().and_then(|(_, id)| app.session.get(id)).map(|d| d.name.clone()).unwrap_or_default();
@@ -1480,6 +1544,11 @@ fn dialog_preferences(ui: &mut egui::Ui, app: &mut MigezApp, req: &mut Pending) 
     // A scrollbar of its own: the floating one lies over the right edge of the theme
     // cards and other full-width rows (#3557).
     preferences_scroll(ui, max, |ui| preferences::preferences_body(ui, app, &t));
+    // Pdfrp 1.2.0: Language modules ▸ Download asks first, in the download question; answered,
+    // it comes back here.
+    if app.dialog == Some(Dialog::TranslateDownload) {
+        req.next = Some(Dialog::TranslateDownload);
+    }
     req.close = preferences::preferences_buttons(ui);
     false
 }
@@ -1669,7 +1738,43 @@ fn dialog_about(ui: &mut egui::Ui) -> bool {
     });
     ui.add_space(8.0);
     ui.label(egui::RichText::new(tl!("Open-source licences: in the lisanslar folder of the installation.")).color(t.text_muted).small());
+    // Pdfrp 1.2.0: offline translation's licences (the legal review's wording, 27.11.2026):
+    // fxtranslate, the language modules, the MPL-2.0 text, and NOTICE's paragraph.
+    #[cfg(not(target_arch = "wasm32"))]
+    about_licences(ui);
     true
+}
+
+/// The Mozilla Public License 2.0, as fxtranslate ships it (`vendor/fxtranslate/LICENSE`).
+#[cfg(not(target_arch = "wasm32"))]
+const MPL_2_0: &str = include_str!("../../../vendor/fxtranslate/LICENSE");
+
+/// About ▸ Licences: the translation helper's and the language modules' licence, where their
+/// source is, and the licence text. Every line that names Mozilla says that Pdfrp isn't
+/// associated with it, in the same size and colour (Mozilla's trademark policy).
+#[cfg(not(target_arch = "wasm32"))]
+fn about_licences(ui: &mut egui::Ui) {
+    use crate::translate::{fxtranslate_source, wording};
+    ui.add_space(10.0);
+    ui.label(egui::RichText::new(tl!("Licences")).font(theme::semibold(14.0)));
+    ui.add_space(4.0);
+    let source = fxtranslate_source();
+    let line = |ui: &mut egui::Ui, name: &str, text: &str| {
+        ui.horizontal_wrapped(|ui| {
+            ui.label(egui::RichText::new(format!("{name}:")).strong());
+            ui.add(egui::Label::new(text).selectable(true).wrap());
+        });
+    };
+    line(ui, "fxtranslate 0.5.0", &crate::i18n::fmt(tl!(wording::FXTRANSLATE_LINE), &[("source", &source)]));
+    line(ui, tl!("Language modules"), tl!(wording::MODULES_LINE));
+    line(ui, tl!("License text"), "LICENSE-MPL-2.0.txt · https://mozilla.org/MPL/2.0/");
+    ui.add_space(4.0);
+    ui.add(egui::Label::new(crate::i18n::fmt(tl!(wording::NOTICE), &[("source", &source)])).selectable(true).wrap());
+    egui::CollapsingHeader::new("Mozilla Public License 2.0").id_salt("about-mpl").show(ui, |ui| {
+        egui::ScrollArea::vertical().id_salt("about-mpl-text").max_height(220.0).show(ui, |ui| {
+            ui.add(egui::Label::new(egui::RichText::new(MPL_2_0).monospace().small()).selectable(true).wrap());
+        });
+    });
 }
 
 fn dialog_pin_tool(ui: &mut egui::Ui, app: &mut MigezApp, req: &mut Pending) -> bool {
@@ -1897,6 +2002,21 @@ fn finish_requests(app: &mut MigezApp, dialog: Dialog, modal_closed: bool, req: 
         // Cancelled or dismissed: nothing is saved.
         app.pending_lock = None;
         app.lock_remember = false;
+    }
+    // Pdfrp: the signed UDF file is converted once the user has read what the PDF won't be;
+    // cancelled or dismissed, it isn't.
+    if req.udf_convert {
+        app.convert_pending_udf();
+    } else if dialog == Dialog::UdfSigned && (modal_closed || req.close) {
+        app.pending_udf.pop_front();
+    }
+    // Pdfrp 1.2.0: Download fetches the modules and then translates; Cancel or dismissing the
+    // question downloads nothing.
+    #[cfg(not(target_arch = "wasm32"))]
+    if let Some(download) = req.translate_download {
+        app.answer_translate_download(download);
+    } else if dialog == Dialog::TranslateDownload && (modal_closed || req.close) {
+        app.answer_translate_download(false);
     }
 }
 

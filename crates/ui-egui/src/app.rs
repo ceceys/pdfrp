@@ -121,6 +121,7 @@ impl MigezApp {
             pending_lock: None,
             lock_answered: None,
             lock_remember: false,
+            pending_udf: Default::default(),
             fill_text_size: fill_sign::TEXT_SIZE,
             fill_tool: fill_sign::FillTool::Signature,
             fill_text_color: [0.0; 3],
@@ -131,6 +132,8 @@ impl MigezApp {
             dialog: None,
             #[cfg(not(target_arch = "wasm32"))]
             updates: Default::default(),
+            #[cfg(not(target_arch = "wasm32"))]
+            translation: Default::default(),
             printer_source: None,
             options_source: None,
             default_paper_source: None,
@@ -577,6 +580,9 @@ impl eframe::App for MigezApp {
     fn on_exit(&mut self, _gl: Option<&eframe::glow::Context>) {
         #[cfg(not(target_arch = "wasm32"))]
         self.updates_exiting();
+        // Pdfrp 1.2.0: the translation helper ends with the app.
+        #[cfg(not(target_arch = "wasm32"))]
+        self.translate_exiting();
     }
 
     /// Each frame's work before drawing: opens, operating-system and control-channel requests,
@@ -764,6 +770,9 @@ impl MigezApp {
         // Pdfrp 1.1.0: the check at start, and the update worker's answer.
         #[cfg(not(target_arch = "wasm32"))]
         self.poll_updates();
+        // Pdfrp 1.2.0: translations, module downloads and removals that finished.
+        #[cfg(not(target_arch = "wasm32"))]
+        self.poll_translate();
         // Shortcuts deferred last frame: the text field has taken that frame's typing since.
         let deferred = std::mem::take(&mut self.deferred_commands);
         self.native_menu_clicks(ctx);

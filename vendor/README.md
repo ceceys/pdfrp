@@ -41,7 +41,9 @@ vendors below retain their independent path patches and licenses.
 Permissively licensed crates we carry small patches for. Each directory keeps the upstream
 licence files unchanged. Every patch is marked `PdfCraft patch:` in the source, is covered by a
 PdfCraft test, and should be proposed upstream. Remove the vendored copy once upstream releases
-the fix. Vendoring copyleft code is never allowed (plan/adr/0001).
+the fix. Vendoring copyleft code is never allowed (plan/adr/0001), with one exception: fxtranslate
+(MPL-2.0, file-level copyleft; [below](#fxtranslate-pdfrp-120)). GPL, AGPL and LGPL code stays out
+without exception.
 
 A PdfCraft patch in `hayro-syntax::Page::base_dimensions` expresses the existing one-point floor as a raw reciprocal of `/UserUnit`, rounded upward only when f32 multiplication would fall below one point. Five `pdfcraft-render` regressions with prefix `raster::tests::raw_crop_` cover the observed dimensions, origins and rotations, units 41/47, bounded vector rasters and the nearly-zero fallback, which is US Letter since patch 44. Accepted page-unit policy and licences are unchanged.
 
@@ -166,3 +168,23 @@ is built in memory.
 | #5178 | Read OpenType-wrapped CFF programs for embedded simple fonts. | `open_type_cff_simple_font` |
 | #5199 | Preserve gray under nonseparable Color blending in vello_cpu. | `nonseparable_gray` |
 | #5228 | Blend supported isolated DeviceCMYK groups in their ink space. | `raster::tests::isolated_cmyk_groups` |
+
+## fxtranslate (Pdfrp 1.2.0)
+
+[fxtranslate 0.5.0](https://crates.io/crates/fxtranslate/0.5.0), the translation engine of the
+offline translation helper `pdfrp-ceviri` (`apps/pdfrp-ceviri`), is licensed under the Mozilla
+Public License 2.0: file-level copyleft, not one of the permissive licences above. It is one of the
+two MPL-2.0 exceptions the owner allowed on 27.11.2026, after the legal review of 26.11.2026;
+the other is the translation models themselves (`ATTRIBUTION.toml`, `[[downloaded]]`).
+Why it is acceptable: the MPL's copyleft covers only the MPL files, so Pdfrp's own code stays MIT
+as a "Larger Work" (MPL 3.3); the source of these files, changes included, stays published here
+(MPL 3.2) and NOTICE says where; their licence notices stay as they are (MPL 3.4). It is the only
+vendored MPL code, and the exception is for it alone. It is a path dependency of `pdfrp-ceviri` only, never of Pdfrp itself: Pdfrp starts the
+helper as a separate program. Every file here stays under the MPL-2.0, its `LICENSE` is unchanged,
+the bundled C++ headers keep theirs (`vendor/gemmology`, MIT; `vendor/xsimd`, BSD-3-Clause), and the
+two changed files (`src/gemmology_shim.cpp`, `build.rs`, both for building on Windows) are listed,
+with their hashes before and after, in [`fxtranslate/PDFRP-DEGISIKLIKLER.md`](fxtranslate/PDFRP-DEGISIKLIKLER.md).
+The executables' recipients are told where this source is (NOTICE). The features `download`, `net`
+and `discovery` stay off. The exception covers fxtranslate's code, not its test data: the two
+files under `tests/fixtures/`, which only fxtranslate's own `tests/packaging.rs` reads, are left
+out of this copy (`PDFRP-DEGISIKLIKLER.md`).

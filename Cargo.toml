@@ -5,7 +5,7 @@ exclude = ["vendor"]
 default-members = ["crates/*", "apps/migez-pdf", "apps/migez-cli", "xtask"]
 
 [workspace.package]
-version = "1.1.0"
+version = "1.2.0"
 edition = "2024"
 license = "MIT"
 rust-version = "1.95"
@@ -31,47 +31,49 @@ craft-docpath = { version = "0.1.0", git = "https://github.com/storytold/craft-l
 # Pdfrp: no craft-update. 1.1.0 has its own update check (crates/update): the latest GitHub
 # release of ceceys/pdfrp, at most once a day at start and from Help ▸ Check for updates.
 # internal
-migez-geom = { path = "crates/geom", version = "1.1.0" }
-migez-filters = { path = "crates/filters", version = "1.1.0" }
-migez-cos = { path = "crates/cos", version = "1.1.0" }
-migez-crypt = { path = "crates/crypt", version = "1.1.0" }
-migez-organize = { path = "crates/organize", version = "1.1.0" }
-migez-measure = { path = "crates/measure", version = "1.1.0" }
-migez-annot = { path = "crates/annot", version = "1.1.0" }
-migez-audit = { path = "crates/audit", version = "1.1.0" }
-migez-fonts = { path = "crates/fonts", version = "1.1.0" }
-migez-model = { path = "crates/model", version = "1.1.0" }
-migez-content = { path = "crates/content", version = "1.1.0" }
-migez-redact = { path = "crates/redact", version = "1.1.0" }
-migez-print = { path = "crates/print", version = "1.1.0" }
-migez-xfdf = { path = "crates/xfdf", version = "1.1.0" }
-migez-sign = { path = "crates/sign", version = "1.1.0" }
-migez-optimize = { path = "crates/optimize", version = "1.1.0" }
-migez-a11y = { path = "crates/a11y", version = "1.1.0" }
-migez-oracle = { path = "crates/oracle", version = "1.1.0" }
-migez-testkit = { path = "crates/testkit", version = "1.1.0" }
-migez-ocr = { path = "crates/ocr", version = "1.1.0" }
-migez-js = { path = "crates/js", version = "1.1.0" }
-migez-compare = { path = "crates/compare", version = "1.1.0" }
-migez-preflight = { path = "crates/preflight", version = "1.1.0" }
-migez-export = { path = "crates/export", version = "1.1.0" }
-migez-edit = { path = "crates/edit", version = "1.1.0" }
-migez-create = { path = "crates/create", version = "1.1.0" }
-migez-forms = { path = "crates/forms", version = "1.1.0" }
-migez-xfa = { path = "crates/xfa", version = "1.1.0" }
-migez-render = { path = "crates/render", version = "1.1.0" }
-migez-engine = { path = "crates/engine", version = "1.1.0" }
-migez-platform = { path = "crates/platform", version = "1.1.0" }
-migez-ui-egui = { path = "crates/ui-egui", version = "1.1.0" }
-migez-automation = { path = "crates/automation", version = "1.1.0", default-features = false }
-migez-prc = { path = "crates/prc", version = "1.1.0" }
-migez-prc-render = { path = "crates/prc-render", version = "1.1.0" }
+migez-geom = { path = "crates/geom", version = "1.2.0" }
+migez-filters = { path = "crates/filters", version = "1.2.0" }
+migez-cos = { path = "crates/cos", version = "1.2.0" }
+migez-crypt = { path = "crates/crypt", version = "1.2.0" }
+migez-organize = { path = "crates/organize", version = "1.2.0" }
+migez-measure = { path = "crates/measure", version = "1.2.0" }
+migez-annot = { path = "crates/annot", version = "1.2.0" }
+migez-audit = { path = "crates/audit", version = "1.2.0" }
+migez-fonts = { path = "crates/fonts", version = "1.2.0" }
+migez-model = { path = "crates/model", version = "1.2.0" }
+migez-content = { path = "crates/content", version = "1.2.0" }
+migez-redact = { path = "crates/redact", version = "1.2.0" }
+migez-print = { path = "crates/print", version = "1.2.0" }
+migez-xfdf = { path = "crates/xfdf", version = "1.2.0" }
+migez-sign = { path = "crates/sign", version = "1.2.0" }
+migez-optimize = { path = "crates/optimize", version = "1.2.0" }
+migez-a11y = { path = "crates/a11y", version = "1.2.0" }
+migez-oracle = { path = "crates/oracle", version = "1.2.0" }
+migez-testkit = { path = "crates/testkit", version = "1.2.0" }
+migez-ocr = { path = "crates/ocr", version = "1.2.0" }
+migez-js = { path = "crates/js", version = "1.2.0" }
+migez-compare = { path = "crates/compare", version = "1.2.0" }
+migez-preflight = { path = "crates/preflight", version = "1.2.0" }
+migez-export = { path = "crates/export", version = "1.2.0" }
+migez-edit = { path = "crates/edit", version = "1.2.0" }
+migez-create = { path = "crates/create", version = "1.2.0" }
+migez-forms = { path = "crates/forms", version = "1.2.0" }
+migez-xfa = { path = "crates/xfa", version = "1.2.0" }
+migez-render = { path = "crates/render", version = "1.2.0" }
+migez-engine = { path = "crates/engine", version = "1.2.0" }
+migez-platform = { path = "crates/platform", version = "1.2.0" }
+migez-ui-egui = { path = "crates/ui-egui", version = "1.2.0" }
+migez-automation = { path = "crates/automation", version = "1.2.0", default-features = false }
+migez-prc = { path = "crates/prc", version = "1.2.0" }
+migez-prc-render = { path = "crates/prc-render", version = "1.2.0" }
 # Pdfrp: Windows' own text recognition (reads Turkish) and conversion through an installed
 # Microsoft Office. Both are Windows features; elsewhere they report themselves unavailable.
-migez-ocr-windows = { path = "crates/ocr-windows", version = "1.1.0" }
-migez-office = { path = "crates/office", version = "1.1.0" }
+migez-ocr-windows = { path = "crates/ocr-windows", version = "1.2.0" }
+migez-office = { path = "crates/office", version = "1.2.0" }
 # Pdfrp 1.1.0: the update check and the installer's download and SHA-256 check.
-migez-update = { path = "crates/update", version = "1.1.0" }
+migez-update = { path = "crates/update", version = "1.2.0" }
+# Pdfrp 1.2.0: offline translation's language modules and the pdfrp-ceviri helper's client.
+migez-translate = { path = "crates/translate", version = "1.2.0" }
 
 # pdf
 hayro = "0.7.1"

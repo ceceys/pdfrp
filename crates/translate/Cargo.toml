@@ -1,0 +1,23 @@
+[package]
+name = "migez-translate"
+description = "Pdfrp's offline translation: the language modules (embedded manifest, download, SHA-256 checks, install) and the client of the pdfrp-ceviri helper"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+# Downloads go through the update check's client (`migez_update::github_transport`): the same
+# User-Agent, the same allowed hosts (legal review, 26.11.2026, condition b).
+migez-update = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+log = { workspace = true }
+# The language modules' SHA-256; the sha2 migez-update uses.
+sha2 = "0.11"
+# Unpacks the release's .zst files: a pure-Rust zstd decoder (MIT), decode only, no C toolchain.
+# fxtranslate names the same crate and version for the same files.
+ruzstd = "0.7"

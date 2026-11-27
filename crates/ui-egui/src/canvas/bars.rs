@@ -124,6 +124,19 @@ pub(super) fn notices(
             return Some(Notice::Close);
         }
     }
+    // Pdfrp: a tab converted from a UDF file says so (a new PDF; the UDF unchanged; with the
+    // legal review's caution, `create_ui::udf_note`) until dismissed, whatever else the bars say.
+    if let Some(text) = view.converted_note.clone()
+        && !view.converted_note_dismissed
+    {
+        let mut dismiss = false;
+        notice_bar(ui, t, "file-text", t.accent_text, text, |ui| {
+            dismiss = icons::button(ui, "x", 22.0, false, tl!("Dismiss")).clicked();
+        });
+        if dismiss {
+            view.converted_note_dismissed = true;
+        }
+    }
     // Content cut at the renderer's limits (#623): what is missing is not visible, so the page
     // is named in a bar of its own, which the signature, form and security bars below can't
     // replace and dismissing them doesn't hide. Dismissing it covers the pages cut so far: a

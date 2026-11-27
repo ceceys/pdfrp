@@ -609,6 +609,11 @@ impl MigezApp {
                 }
                 return Some(false);
             }
+            // Pdfrp 1.2.0: the Translate panel, with the selected text.
+            #[cfg(not(target_arch = "wasm32"))]
+            "edit.translate" => self.open_translate(),
+            #[cfg(target_arch = "wasm32")]
+            "edit.translate" => self.notify(crate::i18n::with_app(tl!("This copy of {app} can't translate."))),
             "comment.copy" => {
                 let Some(i) = active else { return Some(false) };
                 return Some(self.copy_selected_comments(i));

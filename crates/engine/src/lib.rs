@@ -93,13 +93,14 @@ pub use migez_organize::check_custom_key;
 pub use migez_organize::view::{InitialView, Layout as InitialLayout, Magnification, Navigation};
 
 pub use migez_cos::{Algorithm, civil_from_days};
-pub use migez_create::{
-    CONVERTIBLE, CreateError, IMAGE_EXTENSIONS, ImageResolution, OFFICE_EXTENSIONS, SourceKind, TEXT_EXTENSIONS, decode_text, source_kind,
-};
 /// Pdfrp: where LibreOffice is installed, if it is (Office documents convert through it when
 /// the Microsoft Office app isn't there).
 #[cfg(not(target_arch = "wasm32"))]
 pub use migez_create::libreoffice;
+pub use migez_create::{
+    CONVERTIBLE, CreateError, IMAGE_EXTENSIONS, ImageResolution, OFFICE_EXTENSIONS, SourceKind, TEXT_EXTENSIONS, UDF_EXTENSIONS, UDF_NOTE,
+    UDF_SIGNED_NOTE, UdfInfo, decode_text, source_kind, udf_signed,
+};
 pub use migez_edit::added::{
     CHAR_SPACING_LIMIT as ADDED_CHAR_SPACING_LIMIT, paste_place as added_paste_place, paste_rect as added_paste_rect, text_rect as added_text_rect,
     text_width as added_text_width,
@@ -209,3 +210,5 @@ pub const MAX_STAMP_LINE: usize = 200;
 mod document_actions_tests;
 #[cfg(test)]
 mod tests;
+#[cfg(test)]
+mod udf_tests;

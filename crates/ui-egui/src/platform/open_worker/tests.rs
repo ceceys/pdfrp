@@ -1050,16 +1050,17 @@ fn file_open_converts_an_office_document_on_the_worker() {
 }
 
 #[test]
-fn the_open_picker_defaults_to_pdf_and_offers_images_office_text_and_all_files() {
+fn the_open_picker_defaults_to_pdf_and_offers_images_office_udf_text_and_all_files() {
     let filters = MigezApp::open_filters();
     let names: Vec<&str> = filters.iter().map(|(name, _)| name.as_str()).collect();
     #[cfg(not(target_os = "macos"))]
-    assert_eq!(names, ["PDF", "Images", "Office documents", "Text", "All files"]);
+    assert_eq!(names, ["PDF", "Images", "Office documents", "UDF files used by the UYAP Document Editor", "Text", "All files"]);
     #[cfg(target_os = "macos")]
-    assert_eq!(names, ["PDF", "Images", "Office documents", "Text"]);
+    assert_eq!(names, ["PDF", "Images", "Office documents", "UDF files used by the UYAP Document Editor", "Text"]);
     let extensions = |name: &str| filters.iter().find(|(n, _)| n == name).map(|(_, e)| e.clone()).unwrap_or_default();
     assert_eq!(extensions("PDF"), ["pdf"]);
     assert_eq!(extensions("Images"), migez_engine::IMAGE_EXTENSIONS);
     assert!(["doc", "docx", "xls", "xlsx", "ppt", "pptx", "odt", "rtf"].iter().all(|e| extensions("Office documents").contains(e)));
+    assert_eq!(extensions("UDF files used by the UYAP Document Editor"), ["udf"]);
     assert_eq!(extensions("Text"), migez_engine::TEXT_EXTENSIONS);
 }

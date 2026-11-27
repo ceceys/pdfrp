@@ -1,18 +1,34 @@
-# i18n: arayüz çevirileri
+craft-i18n
+==========
 
-Bu klasör, programa derleme sırasında gömülen arayüz kataloglarını taşır:
-`locales/<dil>/common.tsv` ve `locales/<dil>/migez-pdf.tsv`. `MIGEZ_I18N_DIR` ortam değişkeni
-verilmediğinde `crates/ui-egui/build.rs` bu klasörü kendiliğinden kullanır.
+Pdfrp'nin arayüz çevirileri. Derleme bu klasörü `MIGEZ_I18N_DIR` ortam değişkeniyle bulur
+ve katalogları programa gömer; değişken verilmezse arayüz İngilizce olur.
 
-Kataloglar craft-i18n çeviri projesinden alınmıştır. craft-i18n "MIT OR Apache-2.0" lisanslıdır ve
-burada MIT ile kullanılır; telif bildirimi `LICENSE-MIT`, Apache metni `LICENSE-APACHE`,
-çevirmenlerin listesi `ATTRIBUTION.md` dosyasındadır. Türkçe katalog (`locales/tr/`) Pdfrp
-için değiştirilmiştir.
+## İçerik
 
-## English
+| Yol | Ne |
+|---|---|
+| `locales/<dil>/common.tsv` | Paylaşılan dizeler. |
+| `locales/<dil>/migez-pdf.tsv` | Pdfrp'nin kendi dizeleri ve paylaşılanların üzerine yazdıkları. |
+| `language-data/<dil>/` | Yazım sözcük listeleri ve heceleme kalıpları; bkz. [`language-data/README.md`](language-data/README.md). |
+| `docs/catalog-format.md` | Katalog biçimi ve denetlenen kurallar. |
+| `ATTRIBUTION.md` | Çevirmenler ve dil verisi dosyalarının kaynağı ve lisansı. |
+| `crates/craft-i18n-tests` | Katalog denetleyicisi (`cargo test --workspace`). |
 
-The interface catalogs compiled into the program (`locales/<code>/common.tsv` and
-`migez-pdf.tsv`), used by `crates/ui-egui/build.rs` when `MIGEZ_I18N_DIR` is not set. They come
-from the craft-i18n translation project (MIT OR Apache-2.0, used here under MIT; see
-`LICENSE-MIT`, `LICENSE-APACHE` and the translators in `ATTRIBUTION.md`). The Turkish catalog is
-modified for Pdfrp.
+`locales/` altındaki öteki `.tsv` dosyaları başka uygulamalara aittir; Pdfrp onları okumaz.
+
+## Çeviri
+
+Kataloglar düz metindir, satır başına bir dize: `bağlam<TAB>İngilizce<TAB>çeviri`. İngilizce sütun
+programın gösterdiği metnin aynısıdır; eksik bir satır İngilizce görünür. `{ad}` yer tutucuları ve
+sondaki `…` çeviride de bulunmalıdır. Ayrıntılar [`docs/catalog-format.md`](docs/catalog-format.md)
+dosyasındadır.
+
+**Temiz oda:** her satır İngilizce metnin düz anlamından yazılır; başka bir ürünün çevirisine,
+dize tablosuna ya da çevrilmiş arayüzüne bakılmaz, oradan alınmaz.
+
+## Lisans
+
+Kod ve çeviriler "MIT OR Apache-2.0" lisanslıdır (`LICENSE-MIT`, `LICENSE-APACHE`). `language-data/`
+altındaki dil verisi kendi lisansını taşır; her dosyanın yanında (`LICENSE-<kaynak>.txt`) ve
+`ATTRIBUTION.md` dosyasında yazılıdır.

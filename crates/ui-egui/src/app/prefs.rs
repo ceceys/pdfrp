@@ -183,6 +183,11 @@ impl MigezApp {
         // Pdfrp 1.1.0: the update check at start (Preferences ▸ General) and when it last asked.
         v["update_check_at_start"] = self.update_check_at_start.into();
         v["update_last_check"] = serde_json::json!(self.update_last_check);
+        // Pdfrp 1.2.0: the Translate panel's source and target languages.
+        #[cfg(not(target_arch = "wasm32"))]
+        {
+            v["translation"] = self.translation_settings();
+        }
         v["hotbar"] = serde_json::to_value(&self.hotbar).unwrap_or_default();
         v["comment_tool_pinned"] = serde_json::Value::Bool(self.comment_prefs.pinned);
         v["show_secured_notice"] = serde_json::Value::Bool(self.show_secured_notice);
@@ -271,6 +276,8 @@ impl MigezApp {
         if let Some(at) = v["update_last_check"].as_u64() {
             self.update_last_check = Some(at);
         }
+        #[cfg(not(target_arch = "wasm32"))]
+        self.restore_translation_settings(&v["translation"]);
         if let Some(on) = v["show_secured_notice"].as_bool() {
             self.show_secured_notice = on;
         }

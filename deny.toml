@@ -69,6 +69,15 @@ ignore = [
 crate = "epaint_default_fonts"
 allow = ["OFL-1.1", "Ubuntu-font-1.0"]
 
+# Pdfrp 1.2.0: fxtranslate (vendor/fxtranslate), the engine of the offline translation helper, is
+# MPL-2.0 (file-level copyleft). It is built into pdfrp-ceviri.exe only, a separate program Pdfrp
+# starts; never linked into Pdfrp. Its source and the two Windows patches stay in this repository
+# (vendor/fxtranslate/PDFRP-DEGISIKLIKLER.md) and NOTICE says where. Legal review 26.11.2026,
+# owner's instruction 27.11.2026.
+[[licenses.exceptions]]
+crate = "fxtranslate"
+allow = ["MPL-2.0"]
+
 # winprint (craft-print's Windows spooler, #1107) lists reqwest as a build-dependency for its
 # PDFium download, which only runs with its `pdfium` feature; craft-print turns that off. The CA
 # bundle reqwest brings is CDLA-Permissive-2.0 data and is compiled into winprint's build script

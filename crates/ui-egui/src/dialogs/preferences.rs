@@ -544,6 +544,15 @@ pub(crate) fn preferences_body(ui: &mut egui::Ui, app: &mut MigezApp, t: &Tokens
     });
     ui.add_space(12.0);
 
+    // Card 7 (Pdfrp 1.2.0): Language modules of offline translation.
+    #[cfg(not(target_arch = "wasm32"))]
+    {
+        preference_card(ui, t, tl!("Language modules"), Some("languages"), &mut ctx, |ui, ctx| {
+            crate::translate::preferences_card(ui, app, t, ctx);
+        });
+        ui.add_space(12.0);
+    }
+
     if ctx.first_match_scrolled {
         ui.data_mut(|d| d.insert_temp(last_scrolled_id, query.clone()));
     } else if query.trim().is_empty() {

@@ -1,0 +1,34 @@
+[package]
+name = "pdfrp-ceviri"
+description = "Pdfrp's offline translation helper: one JSON request per line on stdin, the translation on stdout (fxtranslate, Mozilla's Firefox Translations models)"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+publish = false
+
+[lints]
+workspace = true
+
+[[bin]]
+name = "pdfrp-ceviri"
+path = "src/main.rs"
+
+# Two builds from one source; the installer ships both and Pdfrp starts the one the processor can
+# run (`is_x86_feature_detected!("avx2")`, crates/translate/src/helper.rs):
+#   AVX2     : FXTRANSLATE_REQUIRE_SIMD=1 CXXSTDLIB_STATIC=1 cargo build --release -p pdfrp-ceviri
+#   portable : cargo build --release -p pdfrp-ceviri --no-default-features --features portable
+# `portable` keeps what `fast` has besides the C++ AVX2 kernel (memory-mapped models, the lean
+# embedding table), so the two builds differ only in the GEMM kernel. fxtranslate's `download`,
+# `net` and `discovery` are never turned on: the helper reads model files from disk and has no
+# network code (legal review, 26.11.2026, condition a). Lex shortlists are not used.
+[features]
+default = ["fast"]
+fast = ["fxtranslate/fast"]
+portable = ["fxtranslate/portable", "fxtranslate/mmap", "fxtranslate/lean-embed"]
+
+[dependencies]
+# MPL-2.0, vendored with two small Windows patches (vendor/fxtranslate/PDFRP-DEGISIKLIKLER.md).
+fxtranslate = { path = "../../vendor/fxtranslate", version = "=0.5.0", default-features = false, features = ["icu-segmenter"] }
+serde = { workspace = true }
+serde_json = { workspace = true }

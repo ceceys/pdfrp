@@ -83,6 +83,9 @@ pub(crate) const TEXT_OPTIONS: &[OptionSpec] =
 
 pub(crate) const COMBINE_OPTIONS: &[OptionSpec] = &[OptionSpec { name: "--out", takes_value: true }];
 
+/// Pdfrp: `convert` (an image, a .txt file, a UDF file or an Office document to a PDF).
+pub(crate) const CONVERT_OPTIONS: &[OptionSpec] = &[OptionSpec { name: "--out", takes_value: true }];
+
 pub(crate) const EXTRACT_OPTIONS: &[OptionSpec] = &[
     OptionSpec { name: "--out", takes_value: true },
     OptionSpec { name: "--pages", takes_value: true },

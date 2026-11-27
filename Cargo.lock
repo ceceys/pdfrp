@@ -238,7 +238,7 @@ dependencies = [
  "objc2-foundation 0.3.2",
  "parking_lot",
  "percent-encoding",
- "windows-sys 0.52.0",
+ "windows-sys 0.61.2",
  "wl-clipboard-rs",
  "x11rb",
 ]
@@ -1155,6 +1155,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7f8f80099a98041a3d1622845c271458a2d73e688351bf3cb999266764b81d48"
 
 [[package]]
+name = "core_maths"
+version = "0.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "77745e017f5edba1a9c1d854f6f3a52dac8a12dd5af5d2f54aecf61e43d80d30"
+dependencies = [
+ "libm",
+]
+
+[[package]]
 name = "cow-utils"
 version = "0.1.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2024,7 +2033,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
 dependencies = [
  "libc",
- "windows-sys 0.52.0",
+ "windows-sys 0.61.2",
 ]
 
 [[package]]
@@ -2383,6 +2392,15 @@ dependencies = [
  "memchr",
  "pin-project-lite",
  "slab",
+]
+
+[[package]]
+name = "fxtranslate"
+version = "0.5.0"
+dependencies = [
+ "cc",
+ "icu_segmenter",
+ "memmap2",
 ]
 
 [[package]]
@@ -3117,6 +3135,7 @@ version = "2.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "82d07aafccd67af15d02512a6adf5896fbc5ed00f2e99b471d2efa14016db3db"
 dependencies = [
+ "core_maths",
  "icu_collections",
  "icu_locale_fallback",
  "icu_provider",
@@ -3525,7 +3544,7 @@ dependencies = [
 
 [[package]]
 name = "migez-a11y"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "migez-content",
  "migez-cos",
@@ -3536,7 +3555,7 @@ dependencies = [
 
 [[package]]
 name = "migez-annot"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "hayro-syntax",
  "migez-cos",
@@ -3548,7 +3567,7 @@ dependencies = [
 
 [[package]]
 name = "migez-audit"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "migez-content",
  "migez-cos",
@@ -3559,7 +3578,7 @@ dependencies = [
 
 [[package]]
 name = "migez-automation"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "base64 0.23.1",
  "flate2",
@@ -3583,7 +3602,7 @@ dependencies = [
 
 [[package]]
 name = "migez-cli"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "base64 0.23.1",
  "migez-audit",
@@ -3601,11 +3620,11 @@ dependencies = [
 
 [[package]]
 name = "migez-compare"
-version = "1.1.0"
+version = "1.2.0"
 
 [[package]]
 name = "migez-content"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "hayro-syntax",
  "migez-cos",
@@ -3613,7 +3632,7 @@ dependencies = [
 
 [[package]]
 name = "migez-cos"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "chrono",
  "hayro-syntax",
@@ -3630,9 +3649,11 @@ dependencies = [
 
 [[package]]
 name = "migez-create"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
+ "base64 0.23.1",
  "encoding_rs",
+ "flate2",
  "hayro-ccitt",
  "hayro-syntax",
  "image",
@@ -3642,6 +3663,7 @@ dependencies = [
  "migez-model",
  "migez-xfa",
  "png 0.18.1",
+ "roxmltree 0.21.2",
  "rustix 1.1.6",
  "thiserror 2.0.21",
  "tiff",
@@ -3650,7 +3672,7 @@ dependencies = [
 
 [[package]]
 name = "migez-crypt"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "aes",
  "md-5",
@@ -3663,7 +3685,7 @@ dependencies = [
 
 [[package]]
 name = "migez-edit"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "hayro-syntax",
  "icu_segmenter",
@@ -3682,7 +3704,7 @@ dependencies = [
 
 [[package]]
 name = "migez-engine"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "chrono",
  "craft-docpath",
@@ -3728,14 +3750,14 @@ dependencies = [
 
 [[package]]
 name = "migez-export"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "flate2",
 ]
 
 [[package]]
 name = "migez-filters"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "fax",
  "flate2",
@@ -3748,7 +3770,7 @@ dependencies = [
 
 [[package]]
 name = "migez-fonts"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "harfrust",
  "migez-cos",
@@ -3758,7 +3780,7 @@ dependencies = [
 
 [[package]]
 name = "migez-forms"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "hayro-syntax",
  "migez-content",
@@ -3771,11 +3793,11 @@ dependencies = [
 
 [[package]]
 name = "migez-geom"
-version = "1.1.0"
+version = "1.2.0"
 
 [[package]]
 name = "migez-js"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "boa_engine",
  "chrono",
@@ -3783,7 +3805,7 @@ dependencies = [
 
 [[package]]
 name = "migez-measure"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "migez-annot",
  "migez-content",
@@ -3796,14 +3818,14 @@ dependencies = [
 
 [[package]]
 name = "migez-model"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "migez-cos",
 ]
 
 [[package]]
 name = "migez-ocr"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "migez-fonts",
  "ocrs",
@@ -3818,7 +3840,7 @@ dependencies = [
 
 [[package]]
 name = "migez-ocr-windows"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "migez-cos",
  "migez-create",
@@ -3830,7 +3852,7 @@ dependencies = [
 
 [[package]]
 name = "migez-ocr-worker"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "js-sys",
  "migez-ocr",
@@ -3840,7 +3862,7 @@ dependencies = [
 
 [[package]]
 name = "migez-office"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "log",
  "windows",
@@ -3849,7 +3871,7 @@ dependencies = [
 
 [[package]]
 name = "migez-optimize"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "image",
  "migez-annot",
@@ -3866,11 +3888,11 @@ dependencies = [
 
 [[package]]
 name = "migez-oracle"
-version = "1.1.0"
+version = "1.2.0"
 
 [[package]]
 name = "migez-organize"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "hayro-syntax",
  "migez-content",
@@ -3881,7 +3903,7 @@ dependencies = [
 
 [[package]]
 name = "migez-pdf"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "chrono",
  "eframe",
@@ -3905,7 +3927,7 @@ dependencies = [
 
 [[package]]
 name = "migez-platform"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "async-channel",
  "futures-lite",
@@ -3916,7 +3938,7 @@ dependencies = [
 
 [[package]]
 name = "migez-prc"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "flate2",
  "proptest",
@@ -3925,7 +3947,7 @@ dependencies = [
 
 [[package]]
 name = "migez-prc-render"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "flate2",
  "migez-prc",
@@ -3934,7 +3956,7 @@ dependencies = [
 
 [[package]]
 name = "migez-preflight"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "flate2",
  "migez-content",
@@ -3945,7 +3967,7 @@ dependencies = [
 
 [[package]]
 name = "migez-print"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "craft-print",
  "log",
@@ -3960,7 +3982,7 @@ dependencies = [
 
 [[package]]
 name = "migez-redact"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "aho-corasick",
  "migez-annot",
@@ -3984,7 +4006,7 @@ dependencies = [
 
 [[package]]
 name = "migez-render"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "bytemuck",
  "flate2",
@@ -4008,7 +4030,7 @@ dependencies = [
 
 [[package]]
 name = "migez-sign"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "aes",
  "aws-lc-rs",
@@ -4047,11 +4069,23 @@ dependencies = [
 
 [[package]]
 name = "migez-testkit"
-version = "1.1.0"
+version = "1.2.0"
+
+[[package]]
+name = "migez-translate"
+version = "1.2.0"
+dependencies = [
+ "log",
+ "migez-update",
+ "ruzstd",
+ "serde",
+ "serde_json",
+ "sha2 0.11.1",
+]
 
 [[package]]
 name = "migez-ui-egui"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "arboard",
  "base64 0.23.1",
@@ -4082,6 +4116,7 @@ dependencies = [
  "migez-ocr",
  "migez-platform",
  "migez-render",
+ "migez-translate",
  "migez-update",
  "migez-xfa",
  "objc2 0.6.5",
@@ -4110,7 +4145,7 @@ dependencies = [
 
 [[package]]
 name = "migez-update"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "log",
  "reqwest",
@@ -4120,7 +4155,7 @@ dependencies = [
 
 [[package]]
 name = "migez-web"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "craft-web-api",
  "craft-web-host",
@@ -4135,7 +4170,7 @@ dependencies = [
 
 [[package]]
 name = "migez-xfa"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "base64 0.23.1",
  "image",
@@ -4149,7 +4184,7 @@ dependencies = [
 
 [[package]]
 name = "migez-xfdf"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "base64 0.23.1",
  "migez-annot",
@@ -4772,7 +4807,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7d8fae84b431384b68627d0f9b3b1245fcf9f46f6c0e3dc902e9dce64edd1967"
 dependencies = [
  "libc",
- "windows-sys 0.52.0",
+ "windows-sys 0.61.2",
 ]
 
 [[package]]
@@ -4859,6 +4894,15 @@ checksum = "112d82ceb8c5bf524d9af484d4e4970c9fd5a0cc15ba14ad93dccd28873b0629"
 dependencies = [
  "digest 0.11.3",
  "hmac",
+]
+
+[[package]]
+name = "pdfrp-ceviri"
+version = "1.2.0"
+dependencies = [
+ "fxtranslate",
+ "serde",
+ "serde_json",
 ]
 
 [[package]]
@@ -5396,7 +5440,7 @@ dependencies = [
  "once_cell",
  "socket2",
  "tracing",
- "windows-sys 0.52.0",
+ "windows-sys 0.61.2",
 ]
 
 [[package]]
@@ -5956,7 +6000,7 @@ dependencies = [
  "errno",
  "libc",
  "linux-raw-sys 0.12.1",
- "windows-sys 0.52.0",
+ "windows-sys 0.61.2",
 ]
 
 [[package]]
@@ -6024,7 +6068,7 @@ dependencies = [
  "security-framework",
  "security-framework-sys",
  "webpki-root-certs",
- "windows-sys 0.52.0",
+ "windows-sys 0.61.2",
 ]
 
 [[package]]
@@ -6061,6 +6105,15 @@ dependencies = [
  "quick-error 1.2.3",
  "tempfile",
  "wait-timeout",
+]
+
+[[package]]
+name = "ruzstd"
+version = "0.7.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "fad02996bfc73da3e301efe90b1837be9ed8f4a462b6ed410aa35d00381de89f"
+dependencies = [
+ "twox-hash",
 ]
 
 [[package]]
@@ -6910,7 +6963,7 @@ dependencies = [
  "getrandom 0.4.3",
  "once_cell",
  "rustix 1.1.6",
- "windows-sys 0.52.0",
+ "windows-sys 0.61.2",
 ]
 
 [[package]]
@@ -7275,6 +7328,16 @@ name = "try-lock"
 version = "0.2.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e421abadd41a4225275504ea4d6566923418b7f05506fbc9c0fe86ba7396114b"
+
+[[package]]
+name = "twox-hash"
+version = "1.6.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "97fee6b57c6a41524a810daee9286c02d7752c4253064d0b05472833a438f675"
+dependencies = [
+ "cfg-if",
+ "static_assertions",
+]
 
 [[package]]
 name = "type-map"
@@ -7984,7 +8047,7 @@ version = "0.1.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c2a7b1c03c876122aa43f3020e6c3c3ee5c05081c9a00739faf7503aeba10d22"
 dependencies = [
- "windows-sys 0.52.0",
+ "windows-sys 0.61.2",
 ]
 
 [[package]]

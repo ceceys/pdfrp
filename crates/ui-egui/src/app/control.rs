@@ -51,6 +51,20 @@ impl MigezApp {
             ("update_check_at_start", _) => {
                 self.update_check_at_start = value.parse::<bool>().map_err(|_| "update_check_at_start must be true or false")?;
             }
+            // Pdfrp 1.2.0: the Translate panel's languages (codes as the language modules write
+            // them: `tr`, `de`, `zh-Hans`; `en` for English).
+            #[cfg(not(target_arch = "wasm32"))]
+            ("translate_from" | "translate_to", _) => {
+                let offered = value == "en" || migez_translate::manifest::embedded().is_ok_and(|m| m.language_codes().contains(&value));
+                if !offered {
+                    return Err(format!("{key} must be en or a language with a module ({value} isn't)"));
+                }
+                if key == "translate_from" {
+                    self.translation.source = Some(value.to_owned());
+                } else {
+                    self.translation.target = value.to_owned();
+                }
+            }
             ("scroll_speed", _) => {
                 self.scroll_speed = scroll_speed::ScrollSpeed::parse(value).ok_or("scroll_speed must be slow, normal, or fast")?;
             }
@@ -73,6 +87,7 @@ impl MigezApp {
                     "tags" => Some(RightPanel::Tags),
                     "search" => Some(RightPanel::Search),
                     "compare" => Some(RightPanel::Compare),
+                    "translate" => Some(RightPanel::Translate),
                     "none" => None,
                     other => return Err(format!("unknown panel {other}")),
                 }

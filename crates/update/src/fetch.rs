@@ -28,7 +28,8 @@ pub const DOWNLOAD_PATH: &str = "/ceceys/pdfrp/releases/download/";
 pub const MAX_RELEASE_JSON: u64 = 1 << 20;
 /// The most bytes read for SHA256SUMS.txt.
 pub const MAX_SUMS: u64 = 64 << 10;
-/// The most bytes downloaded for the installer (1.1.0's is about 32 MB).
+/// The most bytes downloaded for the installer: well above its size (every installer so far,
+/// 1.2.0's included, is under 40 MB; the README gives the current one's).
 pub const MAX_INSTALLER: u64 = 512 << 20;
 
 /// Why a request gave no body.
@@ -159,20 +160,26 @@ impl Source {
     /// HTTPS requests carry besides the address (`Pdfrp/<version>`).
     pub fn open(&self, user_agent: &str) -> Result<(Box<dyn Transport>, String), FetchError> {
         match self {
-            Source::GitHub => https(user_agent).map(|t| (t, LATEST_URL.to_owned())),
+            Source::GitHub => github_transport(user_agent).map(|t| (t, LATEST_URL.to_owned())),
             Source::Local(url) => Ok((Box::new(FileTransport), url.clone())),
             Source::Status(code) => Ok((Box::new(StatusTransport(*code)), "status:".to_owned())),
         }
     }
 }
 
+/// The HTTPS client every request of the app goes through: the update check, the installer's
+/// download and (1.2.0) the language modules' downloads (`migez_translate`). Its requests carry
+/// the User-Agent (`Pdfrp/<version>`, [`crate::user_agent`]) and HTTP's standard headers only
+/// (`https::base`; `tests.rs` records them), reach only [`ALLOWED_HOSTS`] and, on `github.com`,
+/// only this repository's release downloads ([`allowed`]).
 #[cfg(windows)]
-fn https(user_agent: &str) -> Result<Box<dyn Transport>, FetchError> {
+pub fn github_transport(user_agent: &str) -> Result<Box<dyn Transport>, FetchError> {
     Ok(Box::new(crate::https::HttpsTransport::new(user_agent)?))
 }
 
+/// See the Windows version: elsewhere there is no HTTPS client.
 #[cfg(not(windows))]
-fn https(_user_agent: &str) -> Result<Box<dyn Transport>, FetchError> {
+pub fn github_transport(_user_agent: &str) -> Result<Box<dyn Transport>, FetchError> {
     Err(FetchError::Refused("the update check is only built for Windows".into()))
 }
 

@@ -67,7 +67,7 @@ mod tests {
     /// About window and the update check read one number.
     #[test]
     fn the_product_version_is_pdfrps_own() {
-        assert_eq!(PRODUCT_VERSION, "1.1.0");
+        assert_eq!(PRODUCT_VERSION, "1.2.0");
         assert_eq!(PRODUCT_VERSION.split('.').filter(|n| n.parse::<u16>().is_ok()).count(), 3);
         assert_eq!(PRODUCT_VERSION, VERSION, "one version for the crates and the product");
     }

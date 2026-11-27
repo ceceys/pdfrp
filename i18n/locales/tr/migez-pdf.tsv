@@ -3998,3 +3998,53 @@ document scrollbar width	Wide	Geniş
 	Save page as image…	Sayfayı görüntü olarak kaydet…
 	All pages or a range	Tüm sayfalar ya da aralık
 	{name} can't be converted to PDF: that needs {app} or LibreOffice, and neither is installed on this computer.	{name} PDF'ye dönüştürülemedi: bunun için bu bilgisayarda {app} ya da LibreOffice kurulu olmalı; ikisi de bulunamadı.
+# UDF dosyaları (UYAP Doküman Editörü'nün kullandığı), Pdfrp 1.2.0. İmza uyarısı ve görünüm notu hukuk incelemesinin metnidir (26.11.2026; imza uyarısında "PDF'ye" düzeltmesi 27.11.2026), harfi harfine; inceleme olmadan değiştirilmez.
+	UDF files used by the UYAP Document Editor	UYAP Doküman Editörü'nün kullandığı UDF dosyaları
+	{name} was converted from a UDF file into a new PDF. Saving writes a PDF; the UDF file is not changed.	{name}, bir UDF dosyasından yeni bir PDF'ye dönüştürüldü. Kaydettiğinizde PDF olarak kaydedilir; UDF dosyası değişmez.
+	This UDF file contains an electronic signature. Pdfrp does not verify the signature and does not carry it over to the PDF; the PDF to be created does not replace the signed document. Where the signed document is required, use and keep the UDF file itself. The appearance may differ from how it looks in the UYAP Document Editor.	Bu UDF dosyasında elektronik imza bulunuyor. Pdfrp imzayı doğrulamaz ve PDF'ye taşımaz; oluşturulacak PDF imzalı belgenin yerine geçmez. İmzalı belge gereken yerde UDF dosyasının kendisini kullanın ve saklayın. Görünüm UYAP Doküman Editörü'ndekinden farklı olabilir.
+	The appearance may differ from how it looks in the UYAP Document Editor.	Görünüm UYAP Doküman Editörü'ndekinden farklı olabilir.
+	Convert to PDF	PDF'ye dönüştür
+# Pdfrp 1.2.0: çevrimdışı çeviri. İndirme sorusu, panelin notu, Hakkında'daki lisans satırları ve NOTICE paragrafı hukuk incelemesinin metnidir (27.11.2026), harfi harfine; inceleme olmadan değiştirilmez.
+	Translate…	Çevir…
+	Download language module?	Dil modülü indirilsin mi?
+	Download language modules?	Dil modülleri indirilsin mi?
+	The {diller} language module ({boyut}) will be downloaded from Pdfrp's GitHub page; it contains Mozilla's openly licensed (MPL-2.0) translation model, and translation runs entirely on your computer.	{diller} dil modülü ({boyut}) Pdfrp'nin GitHub sayfasından indirilecek; modül, Mozilla'nın açık lisanslı (MPL-2.0) çeviri modelini içerir ve çeviri tamamen bilgisayarınızda yapılır.
+	Because {diller} is translated via English, two language modules ({boyut}) will be downloaded from Pdfrp's GitHub page; they contain Mozilla's openly licensed (MPL-2.0) translation models, and translation runs entirely on your computer.	{diller} çevirisi İngilizce üzerinden yapıldığı için iki dil modülü ({boyut}) Pdfrp'nin GitHub sayfasından indirilecek; modüller, Mozilla'nın açık lisanslı (MPL-2.0) çeviri modellerini içerir ve çeviri tamamen bilgisayarınızda yapılır.
+	Two {dil} language modules ({boyut}) will be downloaded from Pdfrp's GitHub page: {dil} → English and English → {dil}. They contain Mozilla's openly licensed (MPL-2.0) translation models, and translation runs entirely on your computer.	{dil} için iki dil modülü ({boyut}) Pdfrp'nin GitHub sayfasından indirilecek: {dil} → İngilizce ve İngilizce → {dil}. Modüller, Mozilla'nın açık lisanslı (MPL-2.0) çeviri modellerini içerir ve çeviri tamamen bilgisayarınızda yapılır.
+	Pdfrp is not officially associated with Mozilla or its products.	Pdfrp'nin Mozilla ya da Mozilla ürünleriyle bir bağlantısı yoktur.
+	Machine translation may contain errors; for legal or official use, rely on the original.	Makine çevirisidir, hata içerebilir; hukuki ve resmî işlerde belgenin aslını esas alın.
+	Mozilla Public License 2.0 · modified for Pdfrp · Source code: {source}	Mozilla Public License 2.0 · Pdfrp için değiştirildi · Kaynak kodu: {source}
+	Mozilla's Firefox Translations models, unmodified · Mozilla Public License 2.0 · Source: github.com/mozilla/translations · Pdfrp is not officially associated with Mozilla or its products.	Mozilla'nın Firefox Translations çeviri modelleri, değiştirilmeden · Mozilla Public License 2.0 · Kaynak: github.com/mozilla/translations · Pdfrp'nin Mozilla ya da Mozilla ürünleriyle bir bağlantısı yoktur.
+	pdfrp-ceviri.exe contains a version of fxtranslate 0.5.0 modified for Pdfrp (Mozilla Public License 2.0). Source code, including the changes: {source}. The language modules are Mozilla's Firefox Translations models (MPL-2.0), distributed unmodified. Source: https://github.com/mozilla/translations (earlier model repository: https://github.com/mozilla/firefox-translations-models). Pdfrp is not officially associated with Mozilla or its products.	pdfrp-ceviri.exe, fxtranslate 0.5.0'ın Pdfrp için değiştirilmiş bir sürümünü içerir (Mozilla Public License 2.0). Değişiklik dahil kaynak kodu: {source}. Dil modülleri Mozilla'nın Firefox Translations modelleridir (MPL-2.0) ve değiştirilmeden dağıtılır. Kaynak: https://github.com/mozilla/translations (önceki model deposu: https://github.com/mozilla/firefox-translations-models). Pdfrp'nin Mozilla ya da Mozilla ürünleriyle bir bağlantısı yoktur.
+module	Cancel	Vazgeç
+	Licences	Lisanslar
+	Language modules	Dil modülleri
+	License text	Lisans metni
+	Source language	Kaynak dil
+	Target language	Hedef dil
+	Swap languages	Dilleri değiştir
+	Translation	Çeviri
+	Translation copied	Çeviri kopyalandı
+	Downloading… {received} of {total} MB	İndiriliyor… {received} / {total} MB
+	Choose the language of the text.	Metnin dilini seçin.
+	Select text on the page, or type or paste it here.	Sayfada metin seçin ya da buraya yazın veya yapıştırın.
+	The text is too long to translate at once (at most {n} characters).	Metin bir kerede çevrilemeyecek kadar uzun (en çok {n} karakter).
+	The two languages are the same.	İki dil aynı.
+	Couldn't translate: {reason}	Çevrilemedi: {reason}
+	This copy of {app} can't translate.	Bu {app} kopyası çeviri yapamaz.
+	This copy of Pdfrp can't translate.	Bu Pdfrp kopyası çeviri yapamaz.
+	This copy of {app} can't translate: its translation helper isn't installed.	Bu {app} kopyası çeviri yapamaz: çeviri yardımcısı kurulu değil.
+	The translation helper didn't start.	Çeviri yardımcısı başlamadı.
+	The list of language modules can't be read.	Dil modüllerinin listesi okunamıyor.
+	A downloaded file didn't match its SHA-256, so it was deleted and nothing was installed.	İndirilen bir dosya SHA-256 değeriyle uyuşmadı; dosya silindi, hiçbir şey kurulmadı.
+	A download was incomplete, so it was deleted and nothing was installed.	Bir indirme eksik kaldı; dosya silindi, hiçbir şey kurulmadı.
+	The download was cancelled.	İndirme iptal edildi.
+	Couldn't download the language module: {reason}	Dil modülü indirilemedi: {reason}
+	Couldn't unpack the language module: {reason}	Dil modülü açılamadı: {reason}
+	Couldn't save the language module: {reason}	Dil modülü kaydedilemedi: {reason}
+	Translation works between English and {n} languages; other pairs go through English. Each language is two modules, into English and out of it. Modules download from Pdfrp's GitHub page.	Çeviri İngilizce ile {n} dil arasında yapılır; öteki dil çiftleri İngilizce üzerinden çevrilir. Her dil, İngilizceye ve İngilizceden olmak üzere iki modüldür. Modüller Pdfrp'nin GitHub sayfasından indirilir.
+	Remove {language}	Kaldır: {language}
+	Download {language}	İndir: {language}
+	Installed · {size}	Kurulu · {size}
+	Partly installed · {size} to download	Kısmen kurulu · {size} indirilecek
+	Not installed · {size} to download	Kurulu değil · {size} indirilecek

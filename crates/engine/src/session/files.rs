@@ -40,6 +40,14 @@ impl Session {
         self.write_new(&migez_create::from_text(title, text, migez_create::LETTER, 11.0)?)
     }
 
+    /// Pdfrp: a new document from a UDF file of the UYAP Document Editor (`migez_create::from_udf`), set in the
+    /// installed fonts it names. Its e-signature is not checked and is not carried into the PDF
+    /// ([`crate::udf_signed`] tells whether it had one).
+    pub fn create_from_udf(&self, title: &str, bytes: &[u8]) -> Result<(Arc<Vec<u8>>, migez_create::UdfInfo), EditError> {
+        let (doc, info) = migez_create::from_udf(title, bytes, &crate::text_fonts::installed_directories())?;
+        Ok((self.write_new(&doc)?, info))
+    }
+
     /// [`Self::create_from_text`] for a report Pdfrp writes from documents (comment summaries,
     /// compare reports), which can quote any language: when the bundled Inter face can't draw it
     /// all, characters Helvetica can't draw are written as `[U+XXXX]`, and the report's first line
@@ -67,7 +75,7 @@ impl Session {
     fn convert(&self, name: &str, bytes: &Arc<Vec<u8>>, office: Office) -> Result<(SourceKind, Arc<Vec<u8>>), EditError> {
         let Some(kind) = source_kind(name, bytes) else {
             return Err(EditError::Source(format!(
-                "{name}: this file type can't be converted; use a PDF, an image, a .txt file or a Word, Excel or PowerPoint file"
+                "{name}: this file type can't be converted; use a PDF, an image, a .txt file, a UDF file or a Word, Excel or PowerPoint file"
             )));
         };
         if kind == SourceKind::Office && office == Office::Refuse {
@@ -82,6 +90,7 @@ impl Session {
             SourceKind::Image => self.create_from_images(&[(name.to_string(), bytes.to_vec())]),
             SourceKind::Text => self.create_from_text(title, &decode_text(bytes)),
             SourceKind::Office => office_to_pdf(name, bytes),
+            SourceKind::Udf => self.create_from_udf(title, bytes).map(|(pdf, _)| pdf),
         })
         .map_err(|_| EditError::Source(format!("{name}: the file could not be read")))?;
         Ok((kind, created?))
@@ -135,7 +144,7 @@ impl Session {
     fn as_pdf_with(&self, name: &str, bytes: &Arc<Vec<u8>>, office: Office) -> Result<Arc<Vec<u8>>, EditError> {
         let pdf = match source_kind(name, bytes) {
             Some(SourceKind::Pdf) => true,
-            Some(SourceKind::Image | SourceKind::Text | SourceKind::Office) => false,
+            Some(SourceKind::Image | SourceKind::Text | SourceKind::Office | SourceKind::Udf) => false,
             None => name.to_ascii_lowercase().ends_with(".pdf"),
         };
         if pdf { Ok(bytes.clone()) } else { self.convert(name, bytes, office).map(|(_, pdf)| pdf) }

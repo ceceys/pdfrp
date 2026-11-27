@@ -16,7 +16,7 @@ sha256 = "d7ea2d110e94863f82d53c2122bc57fd2fec1288219adfd825adebec4bd2a12e"
 [[document]]
 source = "NOTICE"
 destination = "NOTICE"
-sha256 = "dc55d52ae941733cc3c7f93cd23dcf5ccbb44b6325f4fa53b26f581def6cbc45"
+sha256 = "bff9a2c2902f345f2c70dd06b05ecace2e9286765f9c810ec02e805942ab667f"
 
 [[document]]
 source = "vendor/edit-session/LICENSE-MIT"
@@ -131,6 +131,29 @@ source = "vendor/hayro-cmap/assets/LICENSE.txt"
 licences = ["BSD-3-Clause"]
 destination = "vendor/hayro-cmap/assets/LICENSE.txt"
 sha256 = "742665db9c8e1bc72603c6d319ca3e90b83bd6d95202f0cd4ef11068a07a9c29"
+
+# Pdfrp 1.2.0: fxtranslate (the offline translation helper's engine) and the C++ headers it bundles.
+# The Mozilla Public License 2.0 is not on the audited list (AGENTS.md §1.2), so its document
+# carries no `licences`; it is installed as LICENSE-MPL-2.0.txt (kurulum/pdfrp.iss).
+[[document]]
+source = "vendor/fxtranslate/LICENSE"
+destination = "vendor/fxtranslate/LICENSE"
+sha256 = "1f256ecad192880510e84ad60474eab7589218784b9a50bc7ceee34c2b91f1d5"
+origin = "https://static.crates.io/crates/fxtranslate/fxtranslate-0.5.0.crate#LICENSE"
+
+[[document]]
+source = "vendor/fxtranslate/vendor/gemmology/LICENSE"
+licences = ["MIT"]
+destination = "vendor/fxtranslate/vendor/gemmology/LICENSE"
+sha256 = "122f4fab6deb079e740eb606f9945b36395cd42be6468dc25e6cb1ae201a6cd9"
+origin = "https://static.crates.io/crates/fxtranslate/fxtranslate-0.5.0.crate#vendor/gemmology/LICENSE"
+
+[[document]]
+source = "vendor/fxtranslate/vendor/xsimd/LICENSE"
+licences = ["BSD-3-Clause"]
+destination = "vendor/fxtranslate/vendor/xsimd/LICENSE"
+sha256 = "501352acba62cc54e8e3d293754d606f919c9b425b962193c211f9fa29cd9940"
+origin = "https://static.crates.io/crates/fxtranslate/fxtranslate-0.5.0.crate#vendor/xsimd/LICENSE"
 
 [[document]]
 source = "vendor/vello_common/LICENSE-MIT"

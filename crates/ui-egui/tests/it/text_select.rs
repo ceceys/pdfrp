@@ -256,6 +256,34 @@ fn selected_text_copy_command_requires_selection() {
     assert!(!app.execute("edit.copy"));
 }
 
+/// Pdfrp 1.2.0: Translate… takes the selection as a paragraph (the two lines joined, as the
+/// translation engine needs them), from the right-click menu and the selection bar, and opens
+/// the Translate panel.
+#[test]
+fn translate_takes_the_selection_as_one_paragraph() {
+    use egui_kittest::kittest::Queryable;
+    let (mut h, at) = harness(|_| {});
+    for _ in 0..4 {
+        click(&mut h, at);
+    }
+    assert_eq!(h.state().views[0].selected_text().as_deref(), Some("The quick brown fox\njumps over the dog"));
+    h.run_steps(2);
+    h.get_by_label("Translate…").click();
+    h.run_steps(3);
+    assert_eq!(h.state().right, Some(migez_ui_egui::RightPanel::Translate));
+    assert_eq!(h.state().translation_text(), "The quick brown fox jumps over the dog");
+    // The right-click menu has it too while text is selected.
+    h.state_mut().quick_tool = migez_ui_egui::QuickTool::Hand;
+    h.run_steps(2);
+    h.event(Event::PointerMoved(at));
+    for pressed in [true, false] {
+        h.event(Event::PointerButton { pos: at, button: PointerButton::Secondary, pressed, modifiers: Modifiers::NONE });
+        h.run_steps(1);
+    }
+    h.run_steps(2);
+    assert!(h.query_all_by_label("Translate…").next().is_some(), "the page's menu offers Translate…");
+}
+
 #[test]
 fn selected_text_copy_floating_button_honours_permissions() {
     use egui_kittest::kittest::Queryable;

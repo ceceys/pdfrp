@@ -98,6 +98,42 @@ impl DocView {
         Some(s.text(t)).filter(|x| !x.is_empty())
     }
 
+    /// Pdfrp 1.2.0: the selected text line by line, each line with its box in page view space
+    /// (y down), for Translate… to find paragraphs (`migez_translate::text::from_lines`). The
+    /// lines are Copy's: the same words and spaces. `None` after Select All of the document, for a
+    /// column selection, and where any glyph doesn't run left to right (rotated or vertical text),
+    /// whose boxes don't stack as lines do: Translate… then takes Copy's plain text.
+    pub(crate) fn selected_lines(&self) -> Option<Vec<(String, [f32; 4])>> {
+        if self.all_text {
+            return None;
+        }
+        let s = self.selection?;
+        let Span::Run { anchor, head } = s.span else { return None };
+        let t = self.texts.get(&s.page)?;
+        let mut lines: Vec<(String, [f32; 4])> = Vec::new();
+        let mut current = None;
+        for i in Selection::range(anchor, head) {
+            let Some(g) = t.glyphs.get(i) else { break };
+            if (g.direction[0] - 1.0).abs() > 0.01 || g.direction[1].abs() > 0.01 {
+                return None;
+            }
+            let line = t.line_of.get(i).copied();
+            if current != Some(line) {
+                lines.push((String::new(), g.rect));
+                current = Some(line);
+            } else if t.space_before.get(i).copied().unwrap_or(false)
+                && let Some(last) = lines.last_mut()
+            {
+                last.0.push(' ');
+            }
+            if let Some((text, r)) = lines.last_mut() {
+                text.push_str(&g.text);
+                *r = [r[0].min(g.rect[0]), r[1].min(g.rect[1]), r[2].max(g.rect[2]), r[3].max(g.rect[3])];
+            }
+        }
+        (!lines.is_empty()).then_some(lines)
+    }
+
     /// The selection's page, its text layer and the selected glyphs in copy order, for Copy with
     /// formatting. `None` after Select All of the document and for a column selection, which
     /// copy plain text (a column's rows and tab-separated cells are not paragraphs).
@@ -175,6 +211,8 @@ enum SelectionAction {
     Markup(comments::CommentTool),
     Replace,
     Copy,
+    /// Pdfrp 1.2.0: Translate… (the desktop app).
+    Translate,
 }
 
 /// The selection bar's width before it has been laid out once (English labels).
@@ -235,6 +273,9 @@ pub(super) fn selection_actions(
                 if ui.add_enabled(can_copy, egui::Button::new(tl!("Copy"))).clicked() {
                     chosen = Some(SelectionAction::Copy);
                 }
+                if cfg!(not(target_arch = "wasm32")) && ui.add_enabled(can_copy, egui::Button::new(tl!("Translate…"))).clicked() {
+                    chosen = Some(SelectionAction::Translate);
+                }
             });
         });
     });
@@ -243,6 +284,12 @@ pub(super) fn selection_actions(
         // Copying closes the bar but keeps the words selected, for ⌘C or a second action.
         view.actions_dismissed = Some(selection);
         return true;
+    }
+    if let SelectionAction::Translate = action {
+        // As Copy: the bar closes, the words stay selected; the app opens the Translate panel.
+        view.actions_dismissed = Some(selection);
+        view.translate_requested = true;
+        return false;
     }
     let Some((page, quads)) = view.selection_quads(info) else { return false };
     let last = quads.last().copied().unwrap_or_default();
@@ -269,8 +316,8 @@ pub(super) fn selection_actions(
                 author: prefs.author.clone(),
             }));
         }
-        // Copy is dispatched through the app after the view borrow ends.
-        SelectionAction::Copy => {}
+        // Copy and Translate are dispatched through the app after the view borrow ends.
+        SelectionAction::Copy | SelectionAction::Translate => {}
     }
     false
 }

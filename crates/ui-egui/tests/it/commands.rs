@@ -535,10 +535,10 @@ fn the_about_dialog_shows_the_running_version() {
     let mut h = harness();
     h.state_mut().execute("help.about");
     h.run_steps(3);
-    // Pdfrp's own version, under its own name only (1.1.0, the same number as Cargo's and
+    // Pdfrp's own version, under its own name only (1.2.0, the same number as Cargo's and
     // the installer's).
     h.get_by_label(&format!("Version {}", migez_engine::build_info::PRODUCT_VERSION));
-    assert_eq!(migez_engine::build_info::PRODUCT_VERSION, "1.1.0");
+    assert_eq!(migez_engine::build_info::PRODUCT_VERSION, "1.2.0");
     assert_eq!(migez_engine::build_info::PRODUCT_VERSION, env!("CARGO_PKG_VERSION"));
     assert!(h.query_by_label_contains("based on").is_none());
 }

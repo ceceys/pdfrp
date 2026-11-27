@@ -1,6 +1,6 @@
 # migez-office
 
-Word, Excel ve PowerPoint belgelerini bilgisayarda kurulu **Microsoft Office** ile PDF'e, PDF'i de
+Word, Excel ve PowerPoint belgelerini bilgisayarda kurulu **Microsoft Office** ile PDF'ye, PDF'yi de
 Word ile `.docx`'e çevirir. Yalnız Windows'ta çalışır (COM otomasyonu, IDispatch ile geç bağlama).
 Başka sistemlerde derlenir, dönüştürme işlevleri `OfficeHatasi::Desteklenmiyor` döner.
 

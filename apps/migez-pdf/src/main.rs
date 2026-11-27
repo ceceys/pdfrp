@@ -14,7 +14,7 @@
 //!  --combine-view grid|list  --combine-zoom 60..200`
 //! `--combine files…` adds the files to the Combine files tab (File Explorer's "Combine files in
 //! Pdfrp", #585), of the Pdfrp already running when there is one.
-//! `--create-file <file>` converts the image, text or Office file into a new, unsaved tab (File
+//! `--create-file <file>` converts the image, text, UDF or Office file into a new, unsaved tab (File
 //! Explorer's "Convert to PDF with Pdfrp"), of the Pdfrp already running when there is one.
 //!
 //! `--new-window` opens a window of its own. Without it, on Windows, a launch that only names files
@@ -75,7 +75,7 @@ Options:
   --new-window                open a window of its own instead of passing the files to a running copy
   --create-images [images…]   put the images in one PDF and ask for the page DPI
   --combine files…            add the files to the Combine files tab, of a running copy if there is one
-  --create-file <file>        convert an image, text or Office file to a new PDF tab, of a running copy if there is one
+  --create-file <file>        convert an image, text, UDF or Office file to a new PDF tab, of a running copy if there is one
   --control <file>            enable the UI control channel (migez-cli ui --control <file> …)
   --page N, --zoom 150, --layout continuous, --theme dark, …
                               view settings applied once the files are open
@@ -521,6 +521,10 @@ fn app_creator<'a>(
             app.set_startup_update_check(test_source || release_copy);
             // What earlier updates left in %TEMP% (only the update's own folders, an hour old).
             updates::clean_old_downloads_in_background();
+            // Pdfrp 1.2.0: offline translation: the helper beside Pdfrp.exe, the language modules
+            // in %LOCALAPPDATA%\Pdfrp\models, downloaded (only when the user says so) from the
+            // repository's models-v3.0 release through the update check's client.
+            app.set_translate_setup(migez_ui_egui::translate::TranslateSetup::desktop());
         }
         app.window_state = migez_ui_egui::window_state::WindowState::started_with(cc.storage);
         app.integrated_titlebar = integrated;

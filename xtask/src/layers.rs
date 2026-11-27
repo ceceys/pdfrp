@@ -90,6 +90,10 @@ pub const TABLE: &[(&str, Class)] = &[
     // Pdfrp 1.1.0: the update check (HTTPS to GitHub, the installer's SHA-256); no UI, no
     // workspace dependencies, used by ui-egui only.
     ("update", Class::Layer(7)),
+    // Pdfrp 1.2.0: offline translation's language modules (the embedded manifest, their download
+    // through migez-update's client and the SHA-256 checks) and the client of the pdfrp-ceviri
+    // helper; no UI, used by ui-egui only.
+    ("translate", Class::Layer(7)),
     // test support
     ("testkit", Class::Testkit),
     ("oracle", Class::Testkit),
@@ -98,6 +102,8 @@ pub const TABLE: &[(&str, Class)] = &[
     ("cli", Class::Exempt),
     ("web", Class::Exempt),
     ("ocr-worker", Class::Exempt),
+    // Pdfrp 1.2.0: the offline translation helper (a separate exe over vendored fxtranslate).
+    ("pdfrp-ceviri", Class::Exempt),
     ("xtask", Class::Exempt),
 ];
 
@@ -119,6 +125,9 @@ pub const SIDEWAYS: &[(&str, &str)] = &[
     ("ui-egui", "ui-common"),
     ("ui-egui", "platform"),
     ("ui-egui", "update"),
+    ("ui-egui", "translate"),
+    // Language modules download through the update check's client (the same User-Agent).
+    ("translate", "update"),
     ("automation", "platform"),
 ];
 

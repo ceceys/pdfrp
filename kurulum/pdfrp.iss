@@ -28,16 +28,28 @@
 ; kurulum bitince eski klasördeki kaldırma dosyaları ve lisanslar silinir, boş kalan klasör kalkar
 ; ([Code]). Kullanıcı verisi (%APPDATA%, %LOCALAPPDATA%) silinmez; program ilk açılışta onu yeni
 ; klasöre kopyalar (apps\migez-pdf\src\legacy_names.rs).
+; 1.2.0: çevrimdışı çeviri. Yardımcı program pdfrp-ceviri.exe iki derlemeyle kurulur, ikisi de aynı
+; adla: {app}\ceviri\avx2\ (AVX2 çekirdeği, yaklaşık beş kat hızlı) ve {app}\ceviri\portable\ (her
+; x86-64 işlemci). Pdfrp işlemci AVX2 destekliyorsa ilkini, değilse ikincisini başlatır; yardımcı
+; ilk çeviride açılır, Pdfrp kapanınca kapanır. Derleme: "cargo build --release -p pdfrp-ceviri"
+; (FXTRANSLATE_REQUIRE_SIMD=1, CXXSTDLIB_STATIC=1) ve aynısı "--no-default-features --features
+; portable" ile; araclar\derle.ps1 -Is ceviri ikisini target\ceviri\avx2 ve target\ceviri\portable
+; altına koyar (/DCeviri=<klasör>). Dil modülleri kurulumda yoktur: kullanıcı onaylayınca
+; %LOCALAPPDATA%\Pdfrp\models altına indirilir; kullanıcı verisi olarak kaldırmada silinmez.
+; Lisanslar: LICENSE-MPL-2.0.txt (fxtranslate ve dil modülleri), fxtranslate\ altında gemmology ve
+; xsimd lisansları (AVX2 derlemesine giren C++ başlıkları).
 ; Upstream'in WiX dosyalarından (packaging\windows) bağımsızdır, onlara dokunmaz.
 ; Bu dosya BOM'lu UTF-8 kaydedilmelidir (Türkçe harfler var).
 
 #define AppName "Pdfrp"
 #ifndef AppVersion
-  #define AppVersion "1.1.0"
+  #define AppVersion "1.2.0"
 #endif
 #define AppPublisher "Friday"
 #define AppExeName "Pdfrp.exe"
 #define ProgId "MigEZPdf.PDF"
+; UDF dosyalarının (UYAP Doküman Editörü'nün kullandığı) "Birlikte aç" girişi (iç kimlik).
+#define UdfProgId "MigEZPdf.UDF"
 ; Programın 1.0.1'e kadarki adı ve exe'si: yalnız eski kurulumun kalıntılarını silmek için.
 #define EskiAd "Mig-EZ Pdf"
 #define EskiExe "Mig-EZ Pdf.exe"
@@ -55,6 +67,9 @@
 #endif
 #ifndef LisansListesi
   #define LisansListesi Kok + "\kurulum\cikti\ucuncu-taraf-lisanslar.html"
+#endif
+#ifndef Ceviri
+  #define Ceviri Kok + "\target\ceviri"
 #endif
 
 [Setup]
@@ -116,6 +131,14 @@ Type: files; Name: "{autodesktop}\{#EskiAd}.lnk"
 
 [Files]
 Source: "{#Surum}\migez-pdf.exe"; DestDir: "{app}"; DestName: "{#AppExeName}"; Flags: ignoreversion
+; 1.2.0: çeviri yardımcısının iki derlemesi (Pdfrp işlemciye göre birini başlatır).
+Source: "{#Ceviri}\avx2\pdfrp-ceviri.exe"; DestDir: "{app}\ceviri\avx2"; Flags: ignoreversion
+Source: "{#Ceviri}\portable\pdfrp-ceviri.exe"; DestDir: "{app}\ceviri\portable"; Flags: ignoreversion
+; 1.2.0: fxtranslate'in ve dil modüllerinin lisansı (MPL-2.0), AVX2 derlemesine giren C++ başlıklarının
+; lisansları (NOTICE'ta anılır).
+Source: "{#Kok}\vendor\fxtranslate\LICENSE"; DestDir: "{app}\lisanslar"; DestName: "LICENSE-MPL-2.0.txt"; Flags: ignoreversion
+Source: "{#Kok}\vendor\fxtranslate\vendor\gemmology\LICENSE"; DestDir: "{app}\lisanslar\fxtranslate"; DestName: "gemmology-LICENSE.txt"; Flags: ignoreversion
+Source: "{#Kok}\vendor\fxtranslate\vendor\xsimd\LICENSE"; DestDir: "{app}\lisanslar\fxtranslate"; DestName: "xsimd-LICENSE.txt"; Flags: ignoreversion
 ; Açık kaynak lisansları (Hakkında penceresi bu klasörü gösterir).
 Source: "{#Kok}\LICENSE-MIT"; DestDir: "{app}\lisanslar"; Flags: ignoreversion
 ; Üst kaynağın Apache-2.0 metni: depoda licenses\LICENSE-APACHE-upstream.txt (kökte ikinci lisans
@@ -290,6 +313,27 @@ Root: HKA; Subkey: "Software\Classes\SystemFileAssociations\.pdf\shell\MigEZPdf.
 Root: HKA; Subkey: "Software\Classes\SystemFileAssociations\.pdf\shell\MigEZPdf.Combine"; ValueType: string; ValueName: "Icon"; ValueData: """{app}\{#AppExeName}"",0"
 Root: HKA; Subkey: "Software\Classes\SystemFileAssociations\.pdf\shell\MigEZPdf.Combine"; ValueType: string; ValueName: "MultiSelectModel"; ValueData: "Document"
 Root: HKA; Subkey: "Software\Classes\SystemFileAssociations\.pdf\shell\MigEZPdf.Combine\command"; ValueType: string; ValueName: ""; ValueData: """{app}\{#AppExeName}"" --combine ""%1"""
+
+; UDF dosyaları (UYAP Doküman Editörü'nün kullandığı): Pdfrp onları açar (yeni, kaydedilmemiş bir
+; PDF'ye dönüştürür). PDF'teki gibi yalnız "Birlikte aç" adayıdır ve "Varsayılan uygulamalar"
+; listesinde görünür; varsayılan program değişmez (UserChoice'a dokunulmaz). Sağ tıkta "PDF'ye
+; dönüştür" ve "birleştir" de UDF'ler için var. Tür adında "UYAP" geçmez (hukuk incelemesi, 26.11).
+Root: HKA; Subkey: "Software\Classes\{#UdfProgId}"; ValueType: string; ValueName: ""; ValueData: "UDF dosyası"; Flags: uninsdeletekey
+Root: HKA; Subkey: "Software\Classes\{#UdfProgId}\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: """{app}\{#AppExeName}"",0"
+Root: HKA; Subkey: "Software\Classes\{#UdfProgId}\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\{#AppExeName}"" ""%1"""
+Root: HKA; Subkey: "Software\Classes\.udf\OpenWithProgids"; ValueType: string; ValueName: "{#UdfProgId}"; ValueData: ""; Flags: uninsdeletevalue
+Root: HKA; Subkey: "Software\Classes\Applications\{#AppExeName}\SupportedTypes"; ValueType: string; ValueName: ".udf"; ValueData: ""
+Root: HKA; Subkey: "Software\{#AppName}\Capabilities\FileAssociations"; ValueType: string; ValueName: ".udf"; ValueData: "{#UdfProgId}"
+Root: HKA; Subkey: "Software\Classes\SystemFileAssociations\.udf"; Flags: uninsdeletekeyifempty
+Root: HKA; Subkey: "Software\Classes\SystemFileAssociations\.udf\shell"; Flags: uninsdeletekeyifempty
+Root: HKA; Subkey: "Software\Classes\SystemFileAssociations\.udf\shell\MigEZPdf.CreatePdf"; ValueType: string; ValueName: ""; ValueData: "Pdfrp ile PDF'ye dönüştür"; Flags: uninsdeletekey
+Root: HKA; Subkey: "Software\Classes\SystemFileAssociations\.udf\shell\MigEZPdf.CreatePdf"; ValueType: string; ValueName: "Icon"; ValueData: """{app}\{#AppExeName}"",0"
+Root: HKA; Subkey: "Software\Classes\SystemFileAssociations\.udf\shell\MigEZPdf.CreatePdf"; ValueType: string; ValueName: "MultiSelectModel"; ValueData: "Document"
+Root: HKA; Subkey: "Software\Classes\SystemFileAssociations\.udf\shell\MigEZPdf.CreatePdf\command"; ValueType: string; ValueName: ""; ValueData: """{app}\{#AppExeName}"" --create-file ""%1"""
+Root: HKA; Subkey: "Software\Classes\SystemFileAssociations\.udf\shell\MigEZPdf.Combine"; ValueType: string; ValueName: ""; ValueData: "Pdfrp'de birleştir"; Flags: uninsdeletekey
+Root: HKA; Subkey: "Software\Classes\SystemFileAssociations\.udf\shell\MigEZPdf.Combine"; ValueType: string; ValueName: "Icon"; ValueData: """{app}\{#AppExeName}"",0"
+Root: HKA; Subkey: "Software\Classes\SystemFileAssociations\.udf\shell\MigEZPdf.Combine"; ValueType: string; ValueName: "MultiSelectModel"; ValueData: "Document"
+Root: HKA; Subkey: "Software\Classes\SystemFileAssociations\.udf\shell\MigEZPdf.Combine\command"; ValueType: string; ValueName: ""; ValueData: """{app}\{#AppExeName}"" --combine ""%1"""
 
 ; 1.1.0: Mig-EZ Pdf'in eski adlı kayıtları (ProgId ve sağ tık komutlarının anahtarları aynı kalır,
 ; yukarıda yeni exe'yi gösterir). ValueType none ile deletekey yalnız siler, yeniden kurmaz;

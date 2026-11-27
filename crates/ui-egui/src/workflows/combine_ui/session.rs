@@ -279,6 +279,16 @@ impl MigezApp {
                 notes: Vec::new(),
             };
             let source = bytes.clone();
+            // Pdfrp: a UDF file's row says what the PDF made of it is not, among its warnings;
+            // one with an electronic signature says so at once too, before anything is combined.
+            let udf = crate::create_ui::udf_combine_note(&name, &bytes);
+            if migez_engine::udf_signed(&bytes) && udf.is_some() {
+                self.notify(format!("{name}: {}", crate::create_ui::udf_caution(true)));
+            }
+            let note = match (note, udf) {
+                (Some(origin), Some(udf)) => Some(format!("{origin} {udf}")),
+                (origin, udf) => origin.or(udf),
+            };
             let (bytes, assessed) = match self.session.as_pdf_inline(&name, &bytes) {
                 Ok(pdf) => {
                     let assessed = assess(&pdf, None);

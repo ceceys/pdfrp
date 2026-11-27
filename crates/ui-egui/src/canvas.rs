@@ -502,6 +502,10 @@ pub struct DocView {
     /// Select the replacement page label once if its editor remains focused.
     pub(crate) page_input_reselect: bool,
     pub notice_dismissed: bool,
+    /// Pdfrp: what the tab says about the file it was converted from (a UDF file: that it is a
+    /// new PDF, and what the PDF is not), above its pages until dismissed.
+    pub converted_note: Option<String>,
+    pub converted_note_dismissed: bool,
     /// The user has been told that the form's scripts were turned off (it is said once).
     pub scripts_off_noted: bool,
     /// The file changed on disk while this document had unsaved changes: the notice bar asks
@@ -598,6 +602,9 @@ pub struct DocView {
     /// The selection whose action bar was closed by its Copy button: the bar stays hidden
     /// until the selection changes, as it does once a markup button consumes the selection.
     actions_dismissed: Option<Selection>,
+    /// Pdfrp 1.2.0: the selection bar's Translate… was clicked; the app opens the Translate panel
+    /// after the view borrow ends.
+    pub(crate) translate_requested: bool,
     /// The drag in progress started a text selection: the wheel scrolls the page during it
     /// (#721), which egui's scroll area refuses while anything is dragged.
     selection_drag: bool,
@@ -879,6 +886,8 @@ pub(crate) enum PageMenuAction {
     HandTool,
     MarqueeZoom,
     Copy,
+    /// Pdfrp 1.2.0: Translate… the selected text.
+    Translate,
     Paste(usize, [f64; 2]),
     /// Paste the copied comments, centred at this point of the page.
     PasteComments(usize, [f64; 2]),
@@ -902,6 +911,8 @@ pub(crate) struct PageMenuPerms {
     pub can_print: bool,
     pub can_copy: bool,
     pub can_copy_items: bool,
+    /// Pdfrp 1.2.0: text is selected and may be copied, so it may be translated.
+    pub can_translate: bool,
     pub can_paste: bool,
     /// Copied comments wait to be pasted, and comments may be added.
     pub can_paste_comments: bool,
@@ -938,6 +949,9 @@ pub(crate) fn default_page_context_menu(ui: &mut egui::Ui, page: usize, at: [f64
         ui,
         A::Copy,
     );
+    if cfg!(not(target_arch = "wasm32")) && perms.can_translate {
+        pick(ui.button(tl!("Translate…")), ui, A::Translate);
+    }
     pick(
         ui.add_enabled(
             perms.can_paste,
@@ -1039,6 +1053,8 @@ impl DocView {
             page_input: "1".into(),
             page_input_reselect: false,
             notice_dismissed: false,
+            converted_note: None,
+            converted_note_dismissed: false,
             scripts_off_noted: false,
             disk_changed: false,
             close_requested: false,
@@ -1082,6 +1098,7 @@ impl DocView {
             selection: None,
             all_text: false,
             actions_dismissed: None,
+            translate_requested: false,
             selection_drag: false,
             clicks: 0,
             last_press_time: 0.0,
@@ -2203,6 +2220,7 @@ fn draw_pages(
             can_print: doc.allows_printing(),
             can_copy,
             can_copy_items,
+            can_translate: can_copy && view.selected_text().is_some(),
             can_paste,
             can_paste_comments: allowed && can_paste_comments,
             has_annotations: !info.annotations.is_empty(),
@@ -3743,6 +3761,9 @@ fn apply_frame_requests(app: &mut MigezApp, index: usize, ui: &mut egui::Ui, req
                 app.copy_page_image(page, image);
             }
         }
+        Some(PageMenuAction::Translate) => {
+            app.execute("edit.translate");
+        }
         Some(PageMenuAction::Paste(page, at)) => {
             app.paste_image_at(page, at);
         }
@@ -3836,6 +3857,10 @@ fn apply_frame_requests(app: &mut MigezApp, index: usize, ui: &mut egui::Ui, req
     }
     if copy_selected {
         app.execute("edit.copy");
+    }
+    // Pdfrp 1.2.0: the selection bar's Translate….
+    if app.views.get_mut(index).is_some_and(|v| std::mem::take(&mut v.translate_requested)) {
+        app.execute("edit.translate");
     }
     if copy_comments {
         app.execute("comment.copy");

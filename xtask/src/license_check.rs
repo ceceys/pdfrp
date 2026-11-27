@@ -209,6 +209,7 @@ fn check(root: &Path, docs: &Documents, attribution: &assets::Manifest) -> Vec<S
     for required in ["LICENSE-MIT", UPSTREAM_APACHE, "NOTICE", "vendor/hayro-interpret/assets/LICENSE_FOXIT"]
         .into_iter()
         .chain(attribution.asset.iter().map(|a| a.licence_file.as_str()))
+        .chain(attribution.downloaded.iter().map(|d| d.licence_file.as_str()))
     {
         if !sources.contains(required) {
             problems.push(format!("{required}: required document has no LICENSES.toml mapping"));

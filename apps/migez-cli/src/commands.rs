@@ -1,6 +1,6 @@
 use super::options::{
-    COMBINE_OPTIONS, EXTRACT_OPTIONS, INFO_OPTIONS, RENDER_OPTIONS, SPLIT_OPTIONS, TEXT_OPTIONS, can_be_path_value, flag, needs_value, positional,
-    validate_options,
+    COMBINE_OPTIONS, CONVERT_OPTIONS, EXTRACT_OPTIONS, INFO_OPTIONS, RENDER_OPTIONS, SPLIT_OPTIONS, TEXT_OPTIONS, can_be_path_value, flag,
+    needs_value, positional, validate_options,
 };
 use super::{Arc, CliError, ImageFormat, PageRenderer, Path, PathBuf, RenderConfig, RenderRequest, RequestKind, Write, inspect, stdout_line};
 
@@ -315,6 +315,32 @@ pub(crate) fn combine(args: &[String]) -> Result<(), CliError> {
     let sources = inputs.iter().map(|p| Ok((file_stem(p), read(p)?))).collect::<Result<Vec<_>, String>>()?;
     let bytes = migez_engine::Session::new().combine(&sources).map_err(|e| e.to_string())?;
     write_pdf(Path::new(out), &bytes)
+}
+
+/// Pdfrp: `convert <file> --out out.pdf`: an image, a .txt file, a UDF file (of the UYAP Document
+/// Editor) or (through LibreOffice) an Office document as a new PDF, as File ▸ Open converts it.
+/// For a UDF file, standard error says first what the PDF is not (the app's warning: its
+/// e-signature is not checked or carried over), then what the conversion assumed or left out.
+pub(crate) fn convert(args: &[String]) -> Result<(), CliError> {
+    validate_options("convert", args, CONVERT_OPTIONS)?;
+    let path = *positional(args, CONVERT_OPTIONS).first().ok_or("convert: missing file")?;
+    let out = flag(args, "--out").ok_or("convert: missing --out")?;
+    let name = Path::new(path).file_name().map(|n| n.to_string_lossy().into_owned()).unwrap_or_else(|| path.to_string());
+    let bytes = read(path)?;
+    let session = migez_engine::Session::new();
+    if migez_engine::source_kind(&name, &bytes) == Some(migez_engine::SourceKind::Udf) {
+        let caution = if migez_engine::udf_signed(&bytes) { migez_engine::UDF_SIGNED_NOTE } else { migez_engine::UDF_NOTE };
+        let _ = writeln!(std::io::stderr(), "{name}: {caution}");
+        let (pdf, info) = session.create_from_udf(&file_stem(path), &bytes).map_err(|e| format!("{name}: {e}"))?;
+        let mut err = std::io::stderr().lock();
+        for note in &info.notes {
+            let _ = writeln!(err, "{name}: {note}");
+        }
+        let _ = writeln!(err, "{name}: {} page(s)", info.pages);
+        return write_pdf(Path::new(out), &pdf);
+    }
+    let (_, pdf) = session.convert_to_pdf(&name, &bytes).map_err(|e| e.to_string())?;
+    write_pdf(Path::new(out), &pdf)
 }
 
 pub(crate) fn extract(args: &[String]) -> Result<(), CliError> {

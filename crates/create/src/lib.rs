@@ -12,8 +12,10 @@ mod office;
 #[cfg(not(target_arch = "wasm32"))]
 pub use office::libreoffice;
 pub use office::{OFFICE_EXTENSIONS, is_office, office_to_pdf};
+mod udf;
 use migez_fonts::wrap_with;
 use text_font::TextFont;
+pub use udf::{UDF_EXTENSIONS, UDF_NOTE, UDF_SIGNED_NOTE, UdfInfo, from_udf, is_udf, udf_signed};
 
 #[derive(Debug, thiserror::Error, PartialEq)]
 pub enum CreateError {
@@ -81,8 +83,16 @@ impl Pages {
 const PRODUCER: &str = "Pdfrp";
 
 fn set_title(doc: &mut Document, title: &str) {
+    set_info(doc, title, None);
+}
+
+/// The document information dictionary: `title`, the producer and, if given, `subject`.
+fn set_info(doc: &mut Document, title: &str, subject: Option<&str>) {
     let mut info = Dict::new();
     info.set(b"Title".to_vec(), PdfString::text(title));
+    if let Some(subject) = subject {
+        info.set(b"Subject".to_vec(), PdfString::text(subject));
+    }
     info.set(b"Producer".to_vec(), PdfString::text(PRODUCER));
     let r = doc.add(info);
     doc.trailer_mut().set(b"Info".to_vec(), Object::Ref(r));
@@ -770,6 +780,8 @@ pub enum SourceKind {
     Text,
     /// A Word, Excel, PowerPoint or OpenDocument file, converted through LibreOffice.
     Office,
+    /// A UYAP UDF document, converted here ([`from_udf`]).
+    Udf,
 }
 
 /// File extensions of the images Create converts to PDF.
@@ -778,9 +790,9 @@ pub const IMAGE_EXTENSIONS: [&str; 11] = ["png", "jpg", "jpeg", "tif", "tiff", "
 /// File extensions of the plain-text files Create converts to PDF.
 pub const TEXT_EXTENSIONS: [&str; 2] = ["txt", "text"];
 
-/// File extensions Create converts to PDF itself: [`IMAGE_EXTENSIONS`] and [`TEXT_EXTENSIONS`]
-/// (Office documents go through LibreOffice, [`OFFICE_EXTENSIONS`]).
-pub const CONVERTIBLE: [&str; 13] = ["png", "jpg", "jpeg", "tif", "tiff", "gif", "bmp", "jp2", "j2k", "jpx", "pcx", "txt", "text"];
+/// File extensions Create converts to PDF itself: [`IMAGE_EXTENSIONS`], [`TEXT_EXTENSIONS`] and
+/// [`UDF_EXTENSIONS`] (Office documents go through LibreOffice, [`OFFICE_EXTENSIONS`]).
+pub const CONVERTIBLE: [&str; 14] = ["png", "jpg", "jpeg", "tif", "tiff", "gif", "bmp", "jp2", "j2k", "jpx", "pcx", "txt", "text", "udf"];
 
 /// A PCX file: its manufacturer byte, a version (1 was never used), run-length coding and 1 or 8
 /// bits per plane. `pcx` says when the rest of the header isn't one it can read.
@@ -813,7 +825,8 @@ fn is_image(bytes: &[u8]) -> bool {
 }
 
 /// Whether `bytes` named `name` is a PDF, an image Create can embed, plain text (a `.txt` or
-/// `.text` file) or an Office document ([`is_office`]). `None` for anything else.
+/// `.text` file), a UYAP UDF document ([`is_udf`]) or an Office document ([`is_office`]). `None`
+/// for anything else.
 pub fn source_kind(name: &str, bytes: &[u8]) -> Option<SourceKind> {
     let head = bytes.get(..bytes.len().min(1024)).unwrap_or_default();
     if head.windows(5).any(|w| w == b"%PDF-") {
@@ -821,6 +834,9 @@ pub fn source_kind(name: &str, bytes: &[u8]) -> Option<SourceKind> {
     }
     if is_image(bytes) {
         return Some(SourceKind::Image);
+    }
+    if is_udf(name, bytes) {
+        return Some(SourceKind::Udf);
     }
     if is_office(name, bytes) {
         return Some(SourceKind::Office);

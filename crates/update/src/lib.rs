@@ -11,6 +11,9 @@
 //! no identifier, no settings, no document data. Addresses outside those hosts and that path,
 //! plain HTTP, and redirects elsewhere are refused ([`fetch::allowed`]).
 //!
+//! Pdfrp 1.2.0: the language modules of offline translation download through the same client
+//! ([`github_transport`]), from this repository's `models-v3.0` release, with the same User-Agent.
+//!
 //! The installer is never started silently: its wizard shows and the user starts the installation
 //! ([`INSTALLER_ARGS`]).
 //!
@@ -28,7 +31,7 @@ mod version;
 #[cfg(test)]
 mod tests;
 
-pub use fetch::{ALLOWED_HOSTS, DOWNLOAD_PATH, FetchError, FileTransport, LATEST_URL, OVERRIDE_ENV, Source, Transport, allowed};
+pub use fetch::{ALLOWED_HOSTS, DOWNLOAD_PATH, FetchError, FileTransport, LATEST_URL, OVERRIDE_ENV, Source, Transport, allowed, github_transport};
 pub use install::{
     DOWNLOAD_PREFIX, INSTALLER_ARGS, InstallError, Verified, clean_old_downloads, download, installer_args, is_download_folder, sha256_hex,
 };

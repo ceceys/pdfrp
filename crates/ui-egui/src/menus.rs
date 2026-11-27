@@ -80,6 +80,7 @@ const PANELS: &[(RightPanel, &str, &str)] = &[
     (RightPanel::Tags, "tags", "Tags"),
     (RightPanel::Search, "search", "Search"),
     (RightPanel::Compare, "compare", "Compare"),
+    (RightPanel::Translate, "translate", "Translate"),
 ];
 
 /// The English titles of the menus and submenus, for the bar's mnemonics in languages whose
@@ -155,6 +156,8 @@ const EDIT: &[&str] = &[
     SEP,
     "edit.column_select",
     "edit.snapshot",
+    // Pdfrp 1.2.0: the Translate panel.
+    "edit.translate",
     SEP,
     "edit.attach",
     "form.clear",

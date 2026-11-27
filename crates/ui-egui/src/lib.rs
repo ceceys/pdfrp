@@ -164,6 +164,8 @@ use platform::pickers;
 pub use platform::portable;
 #[cfg(not(target_arch = "wasm32"))]
 use platform::system_fonts;
+#[cfg(not(target_arch = "wasm32"))]
+pub use platform::translate;
 pub use platform::ui_scale;
 #[cfg(not(target_arch = "wasm32"))]
 pub use platform::updates;
@@ -420,6 +422,9 @@ pub struct MigezApp {
     /// save that fails or is cancelled asks again next time.
     pub(crate) lock_answered: Option<migez_engine::DocId>,
     pub(crate) lock_remember: bool,
+    /// Pdfrp: UDF files with an electronic signature, each waiting behind [`Dialog::UdfSigned`]
+    /// to be converted, the first one first.
+    pub(crate) pending_udf: std::collections::VecDeque<create_ui::PendingUdf>,
     /// Point size for new Fill & Sign text and dates, kept across launches.
     pub fill_text_size: f64,
     pub fill_tool: fill_sign::FillTool,
@@ -439,6 +444,10 @@ pub struct MigezApp {
     /// Pdfrp 1.1.0: the update check, its card and a checked installer (see `updates`).
     #[cfg(not(target_arch = "wasm32"))]
     pub(crate) updates: updates::Updates,
+    /// Pdfrp 1.2.0: offline translation: the panel's text and languages, the helper, downloads
+    /// (see `translate`).
+    #[cfg(not(target_arch = "wasm32"))]
+    pub(crate) translation: translate::Translation,
     /// Lists the Print dialog's printers in the background (the desktop app sets it; see
     /// [`PrinterSource`]).
     pub printer_source: Option<PrinterSource>,

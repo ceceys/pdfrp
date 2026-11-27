@@ -23,6 +23,11 @@ zune-jpeg = "0.5"
 thiserror = { workspace = true }
 # Already in the graph through lopdf; used only to read plain-text files (decode_text).
 encoding_rs = "0.8"
+# UYAP UDF documents (src/udf): content.xml, base64 PNG pictures, Deflate ZIP entries. All three
+# are already in the graph (xfa, xfdf, preflight use them); the ZIP directory is read in udf/zip.rs.
+roxmltree = "0.21"
+base64 = "0.23"
+flate2 = { workspace = true }
 
 [target.'cfg(unix)'.dependencies]
 # Already in the graph (migez-platform, ui-egui); stops a timed-out LibreOffice's whole process

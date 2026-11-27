@@ -1,0 +1,9 @@
+Label = "Translate"
+Button "Close" [off]
+Label = "Source language"
+ComboBox "Source language" = "Choose…"
+Label = "Target language"
+ComboBox "Target language" = "English"
+Button "Translate"
+MultilineTextInput
+Label = "Machine translation may contain errors; for legal or official use, rely on the original."

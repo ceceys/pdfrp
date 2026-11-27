@@ -49,8 +49,26 @@ sections, pictures and external cell references point at a local listener made n
 with or without the Writer and Calc settings (LibreOffice 26.8.1, Windows, 2026-10-26), so the settings are a
 second line of defence rather than a measured fix.
 
-`IMAGE_EXTENSIONS`, `TEXT_EXTENSIONS` and `OFFICE_EXTENSIONS` are what the app's file pickers
-offer, so detection and pickers agree.
+UDF files, the documents the UYAP Document Editor uses (`udf/`), are read here, with no
+other program: `is_udf(name, bytes)` knows one by its `.udf` name and ZIP signature, and
+`from_udf(title, bytes, font_dirs)` lays out `content.xml` (page format and margins, paragraph
+alignment, indents, spacing, tabs, runs with their font, size, bold, italic, underline and
+colour, bulleted and numbered lists, tables, PNG pictures, headers and footers with page
+numbers) in the installed fonts the file names, else similar ones, else Inter. A header is drawn
+`headerFOffset` below the top of the page and a footer ends `footerFOffset` above its bottom; the
+text stays inside the margins and, where a header or footer draws past its margin (a logo and
+address lines, a footer of several lines, a negative top margin), keeps 6 points clear of what
+it draws. Empty header and footer paragraphs take no room. The ZIP reader
+is its own (stored and Deflate entries, no encryption, no ZIP64, bounded sizes). The format is
+not published: what the attributes mean was read from UDF files, and `UdfInfo::notes` says
+what was assumed or left out. The e-signature (`sign.sgn`) is never checked and never carried
+into the PDF; `udf_signed` tells whether there is one, the PDF's Subject says it stayed behind,
+and nothing is drawn on the pages about it. `UDF_SIGNED_NOTE` and `UDF_NOTE` are what the app
+says of a signed and an unsigned file (the Turkish is a legal review's wording, 26.11.2026).
+Pdfrp is not affiliated with the Turkish Ministry of Justice or UYAP.
+
+`IMAGE_EXTENSIONS`, `TEXT_EXTENSIONS`, `OFFICE_EXTENSIONS` and `UDF_EXTENSIONS` are what the
+app's file pickers offer, so detection and pickers agree.
 
 Image export and Save Image As apply each lossless image's Decode pair before converting its color components.
 JBIG2 images and masks are decoded through `migez_cos::ImageBudget` (`migez_filters::decode_jbig2_within`), behind

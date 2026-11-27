@@ -14,9 +14,9 @@ use migez_update::{FetchError, Transport};
 use super::*;
 
 const API: &str = "https://api.github.com/repos/ceceys/pdfrp/releases/latest";
-const EXE: &str = "https://github.com/ceceys/pdfrp/releases/download/v1.2.0/Pdfrp.Kurulum.1.2.0.exe";
-const SUMS: &str = "https://github.com/ceceys/pdfrp/releases/download/v1.2.0/SHA256SUMS.txt";
-const INSTALLER: &[u8] = b"MZ pretend installer 1.2.0";
+const EXE: &str = "https://github.com/ceceys/pdfrp/releases/download/v1.3.0/Pdfrp.Kurulum.1.3.0.exe";
+const SUMS: &str = "https://github.com/ceceys/pdfrp/releases/download/v1.3.0/SHA256SUMS.txt";
+const INSTALLER: &[u8] = b"MZ pretend installer 1.3.0";
 
 /// Answers from a table (404 for anything else) and counts the requests.
 #[derive(Default)]
@@ -46,7 +46,7 @@ fn release_json(tag: &str) -> Vec<u8> {
         "draft": false,
         "prerelease": false,
         "assets": [
-            { "name": "Pdfrp.Kurulum.1.2.0.exe", "browser_download_url": EXE, "size": INSTALLER.len() },
+            { "name": "Pdfrp.Kurulum.1.3.0.exe", "browser_download_url": EXE, "size": INSTALLER.len() },
             { "name": "SHA256SUMS.txt", "browser_download_url": SUMS, "size": 0 },
         ],
     })
@@ -56,7 +56,7 @@ fn release_json(tag: &str) -> Vec<u8> {
 
 /// GitHub with release `tag`, whose SHA256SUMS.txt gives `listed`'s SHA-256 for the installer.
 fn github(tag: &str, listed: &[u8]) -> Arc<Fake> {
-    let sums = format!("{}  Pdfrp Kurulum 1.2.0.exe\n", migez_update::sha256_hex(listed).unwrap());
+    let sums = format!("{}  Pdfrp Kurulum 1.3.0.exe\n", migez_update::sha256_hex(listed).unwrap());
     let mut fake = Fake::default();
     fake.answers.insert(API.into(), Ok(release_json(tag)));
     fake.answers.insert(EXE.into(), Ok(INSTALLER.to_vec()));
@@ -168,7 +168,7 @@ fn a_failed_check_is_quiet_at_start_and_said_on_request() {
 fn the_check_at_start_waits_for_the_preference_and_a_day() {
     let now = migez_update::now_secs();
     for (on, last, asks) in [(true, None, true), (false, None, false), (true, Some(now - 60), false), (true, Some(now - 2 * 86_400), true)] {
-        let fake = github("v1.2.0", INSTALLER);
+        let fake = github("v1.3.0", INSTALLER);
         let mut s = setup("start", fake.clone(), "en");
         s.app.update_check_at_start = on;
         s.app.update_last_check = last;
@@ -215,13 +215,13 @@ fn the_preference_and_the_last_check_are_kept_in_the_settings() {
 
 #[test]
 fn update_now_downloads_checks_and_quits_then_the_installer_starts_on_exit() {
-    let fake = github("v1.2.0", INSTALLER);
+    let fake = github("v1.3.0", INSTALLER);
     let mut s = setup("update", fake.clone(), "en");
     let ctx = egui::Context::default();
     s.app.ctx = Some(ctx.clone());
     s.app.check_for_updates();
     s.app.poll_updates();
-    assert_eq!(s.app.update_offered().as_deref(), Some("1.2.0"));
+    assert_eq!(s.app.update_offered().as_deref(), Some("1.3.0"));
     assert_eq!(fake.asked.lock().unwrap().len(), 1, "nothing is downloaded before Update now");
     s.app.start_update_download();
     s.app.poll_updates();
@@ -233,7 +233,7 @@ fn update_now_downloads_checks_and_quits_then_the_installer_starts_on_exit() {
     let started = s.started.lock().unwrap().clone();
     assert_eq!(started.len(), 1);
     assert_eq!(started[0].1, INSTALLER, "the checked file");
-    assert_eq!(started[0].0.file_name().unwrap(), "Pdfrp Kurulum 1.2.0.exe");
+    assert_eq!(started[0].0.file_name().unwrap(), "Pdfrp Kurulum 1.3.0.exe");
     assert!(started[0].0.starts_with(&s.dir), "in the download folder");
     assert!(!s.app.update_ready());
     // A second exit starts nothing more.
@@ -243,7 +243,7 @@ fn update_now_downloads_checks_and_quits_then_the_installer_starts_on_exit() {
 
 #[test]
 fn a_sha256_mismatch_is_shown_and_nothing_is_started() {
-    let fake = github("v1.2.0", b"MZ the file the release meant");
+    let fake = github("v1.3.0", b"MZ the file the release meant");
     let mut s = setup("mismatch", fake, "en");
     s.app.ctx = Some(egui::Context::default());
     s.app.check_for_updates();
@@ -267,7 +267,7 @@ fn a_sha256_mismatch_is_shown_and_nothing_is_started() {
 
 #[test]
 fn cancel_at_the_save_question_calls_the_install_off() {
-    let mut s = setup("cancel", github("v1.2.0", INSTALLER), "en");
+    let mut s = setup("cancel", github("v1.3.0", INSTALLER), "en");
     let ctx = egui::Context::default();
     s.app.ctx = Some(ctx.clone());
     s.app.open_bytes("a.pdf", None, pdf("Draft")).unwrap();
@@ -287,7 +287,7 @@ fn cancel_at_the_save_question_calls_the_install_off() {
     assert!(!s.app.allow_quit, "Cancel keeps the app open");
     assert!(!s.app.update_ready(), "nothing waits to install");
     assert!(s.app.update_downloaded(), "the checked download is kept for Update now");
-    assert_eq!(s.app.update_offered().as_deref(), Some("1.2.0"));
+    assert_eq!(s.app.update_offered().as_deref(), Some("1.3.0"));
     // A later ordinary quit installs nothing, and deletes the download.
     let path = s.app.updates.verified.as_ref().map(|v| v.path.clone()).unwrap();
     assert!(!s.app.request_quit(&ctx), "File ▸ Quit asks about the document");
@@ -302,7 +302,7 @@ fn cancel_at_the_save_question_calls_the_install_off() {
 
 #[test]
 fn update_now_again_after_cancel_installs_on_that_quit() {
-    let mut s = setup("again", github("v1.2.0", INSTALLER), "en");
+    let mut s = setup("again", github("v1.3.0", INSTALLER), "en");
     let ctx = egui::Context::default();
     s.app.ctx = Some(ctx.clone());
     s.app.open_bytes("a.pdf", None, pdf("Draft")).unwrap();
@@ -328,7 +328,7 @@ fn update_now_again_after_cancel_installs_on_that_quit() {
 
 #[test]
 fn later_deletes_the_download() {
-    let mut s = setup("later-file", github("v1.2.0", INSTALLER), "en");
+    let mut s = setup("later-file", github("v1.3.0", INSTALLER), "en");
     let ctx = egui::Context::default();
     s.app.ctx = Some(ctx.clone());
     s.app.open_bytes("a.pdf", None, pdf("Draft")).unwrap();
@@ -352,11 +352,11 @@ fn the_card_offers_update_now_and_later_in_turkish() {
     if !crate::i18n::needs_catalogs() {
         return;
     }
-    let Setup { mut app, started, _folder, .. } = setup("card", github("v1.2.0", INSTALLER), "tr");
+    let Setup { mut app, started, _folder, .. } = setup("card", github("v1.3.0", INSTALLER), "tr");
     app.check_for_updates();
     let mut h = Harness::builder().with_size(egui::vec2(1100.0, 700.0)).build_eframe(move |_cc| app);
     h.run_steps(4);
-    h.get_by_label("Pdfrp 1.2.0 hazır");
+    h.get_by_label("Pdfrp 1.3.0 hazır");
     h.get_by_label("Sonra");
     h.get_by_label("Şimdi güncelle").click();
     h.run_steps(3);
@@ -368,14 +368,14 @@ fn the_card_offers_update_now_and_later_in_turkish() {
 
 #[test]
 fn the_card_says_later_puts_it_away_in_english() {
-    let Setup { mut app, _folder, .. } = setup("later", github("v1.2.0", INSTALLER), "en");
+    let Setup { mut app, _folder, .. } = setup("later", github("v1.3.0", INSTALLER), "en");
     app.check_for_updates();
     let mut h = Harness::builder().with_size(egui::vec2(1100.0, 700.0)).build_eframe(move |_cc| app);
     h.run_steps(4);
-    h.get_by_label("Pdfrp 1.2.0 is ready");
+    h.get_by_label("Pdfrp 1.3.0 is ready");
     h.get_by_label("Later").click();
     h.run_steps(2);
-    assert!(h.query_by_label("Pdfrp 1.2.0 is ready").is_none());
+    assert!(h.query_by_label("Pdfrp 1.3.0 is ready").is_none());
     assert_eq!(h.state().update_offered(), None);
 }
 

@@ -52,6 +52,8 @@ pub enum RightPanel {
     Search,
     /// Compare files: the differences.
     Compare,
+    /// Pdfrp 1.2.0: Translate… — the selected text and its offline translation.
+    Translate,
 }
 
 /// Quick-action bar tools (the vertical floating strip).
@@ -153,6 +155,13 @@ pub enum Dialog {
     /// Saving a document with a signature just placed by Fill & Sign: lock it into the page
     /// first? (#2149)
     LockSignatures,
+    /// Pdfrp: a UDF file with an electronic signature, before it is converted to PDF: the
+    /// signature is not checked and not carried over (`MigezApp::pending_udf`).
+    UdfSigned,
+    /// Pdfrp 1.2.0: Translate… (or Preferences ▸ Language modules ▸ Download) needs a language
+    /// module that isn't installed: download it? (`MigezApp::translation`, the legal review's
+    /// wording.)
+    TranslateDownload,
     /// Link Properties.
     LinkProps,
     /// Organize ▸ Extract (options), Rotate Pages.

@@ -993,6 +993,7 @@ fn turkish_suffixes_after_pdf_follow_how_it_is_read() {
     let turkish = Lang::from_code("tr").expect("tr registered");
     let wrong = ["i", "ı", "e", "in", "ın", "te", "ten", "tir", "le", "ini", "inin"];
     let mut found = Vec::new();
+    // No exceptions: the legal review's UDF warning says "PDF'ye" too since 27.11.2026.
     for (_, _, translation) in turkish.catalog_texts().flat_map(rows) {
         for (at, _) in translation.match_indices("PDF") {
             let after = translation.get(at + 3..).unwrap_or_default();
@@ -1642,5 +1643,25 @@ fn image_paste_and_home_notifications_are_translated() {
                 println!("{}: no translation for {source:?} (shows in English)", language.code());
             }
         }
+    }
+}
+
+/// Pdfrp: what is said of UDF files in Turkish is the legal review's wording, word for word
+/// (26.11.2026; "PDF'ye" in the warning, 27.11.2026): the warning before a signed file is
+/// converted, the note on an unsigned one and the file type's name. No "UYAP compatible", no
+/// "official", no "approved".
+#[test]
+fn the_udf_texts_are_the_legal_reviews_turkish_word_for_word() {
+    needs_catalogs!();
+    let turkish = Lang::from_code("tr").expect("tr registered");
+    assert_eq!(
+        tr(turkish, migez_engine::UDF_SIGNED_NOTE),
+        "Bu UDF dosyasında elektronik imza bulunuyor. Pdfrp imzayı doğrulamaz ve PDF'ye taşımaz; oluşturulacak PDF imzalı belgenin yerine geçmez. İmzalı belge gereken yerde UDF dosyasının kendisini kullanın ve saklayın. Görünüm UYAP Doküman Editörü'ndekinden farklı olabilir."
+    );
+    assert_eq!(tr(turkish, migez_engine::UDF_NOTE), "Görünüm UYAP Doküman Editörü'ndekinden farklı olabilir.");
+    assert_eq!(tr(turkish, "UDF files used by the UYAP Document Editor"), "UYAP Doküman Editörü'nün kullandığı UDF dosyaları");
+    for source in [migez_engine::UDF_SIGNED_NOTE, migez_engine::UDF_NOTE, "UDF files used by the UYAP Document Editor"] {
+        let said = tr(turkish, source).to_lowercase();
+        assert!(!["uyumlu", "resmî", "resmi", "onaylı"].iter().any(|w| said.contains(w)), "{said}");
     }
 }

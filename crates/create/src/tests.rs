@@ -2966,9 +2966,9 @@ fn stripping_extended_xmp_leaves_the_rest_of_the_jpeg() {
 }
 
 #[test]
-fn convertible_is_the_image_and_text_extensions() {
-    let both: Vec<&str> = IMAGE_EXTENSIONS.iter().chain(TEXT_EXTENSIONS.iter()).copied().collect();
-    assert_eq!(both, CONVERTIBLE.to_vec());
+fn convertible_is_the_image_text_and_udf_extensions() {
+    let all: Vec<&str> = IMAGE_EXTENSIONS.iter().chain(TEXT_EXTENSIONS.iter()).chain(UDF_EXTENSIONS.iter()).copied().collect();
+    assert_eq!(all, CONVERTIBLE.to_vec());
     assert!(OFFICE_EXTENSIONS.iter().all(|e| !CONVERTIBLE.contains(e) && *e != "pdf"));
 }
 

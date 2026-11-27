@@ -1579,7 +1579,7 @@ fn files_that_cannot_be_converted_are_refused_clearly() {
     assert_eq!(
         err,
         EditError::Source(
-            "archive.zip: this file type can't be converted; use a PDF, an image, a .txt file or a Word, Excel or PowerPoint file".into()
+            "archive.zip: this file type can't be converted; use a PDF, an image, a .txt file, a UDF file or a Word, Excel or PowerPoint file".into()
         )
     );
     assert!(matches!(s.convert_to_pdf("empty", &Arc::new(Vec::new())), Err(EditError::Source(_))));

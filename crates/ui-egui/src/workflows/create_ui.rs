@@ -8,6 +8,9 @@ use std::sync::Arc;
 use crate::MigezApp;
 use crate::widgets;
 
+#[cfg(test)]
+mod udf_tests;
+
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub enum ResolutionChoice {
     #[default]
@@ -101,18 +104,92 @@ fn stem(name: &str) -> &str {
     name.rsplit_once('.').map_or(name, |(s, _)| s)
 }
 
+/// Pdfrp: what is said of a UDF file with an electronic signature, before it is converted
+/// (`Dialog::UdfSigned`) and above the PDF made from it. The Turkish is the legal review's
+/// wording, word for word (26.11.2026): change neither without it.
+pub(crate) const UDF_SIGNED_NOTE: &str = migez_engine::UDF_SIGNED_NOTE;
+
+/// Pdfrp: what is said of a UDF file without one (the same review's wording).
+pub(crate) const UDF_NOTE: &str = migez_engine::UDF_NOTE;
+
+/// Pdfrp: what the tab of a PDF converted from the UDF file `name` says above its pages.
+pub(crate) fn udf_note(name: &str, signed: bool) -> String {
+    let converted = crate::i18n::fmt(
+        tl!("{name} was converted from a UDF file into a new PDF. Saving writes a PDF; the UDF file is not changed."),
+        &[("name", name)],
+    );
+    format!("{converted} {}", udf_caution(signed))
+}
+
+/// Pdfrp: [`UDF_SIGNED_NOTE`] or [`UDF_NOTE`], in the interface language.
+pub(crate) fn udf_caution(signed: bool) -> &'static str {
+    if signed { tl!(UDF_SIGNED_NOTE) } else { tl!(UDF_NOTE) }
+}
+
+/// Pdfrp: what Combine's Warnings column says of the file `name`, when it is a UDF file: it
+/// becomes a PDF as it joins the list, and the combined PDF has no signature of it either.
+pub(crate) fn udf_combine_note(name: &str, bytes: &[u8]) -> Option<String> {
+    (migez_engine::source_kind(name, bytes) == Some(migez_engine::SourceKind::Udf)).then(|| udf_caution(migez_engine::udf_signed(bytes)).to_owned())
+}
+
+/// Pdfrp: a UDF file with an electronic signature, held back from conversion until the user has
+/// read what the PDF made from it won't be (`Dialog::UdfSigned`).
+pub(crate) struct PendingUdf {
+    pub(crate) name: String,
+    /// Where it was read from, for Save to propose that folder.
+    path: Option<String>,
+    bytes: Vec<u8>,
+    /// The tool that asked for the file, run once it is open.
+    then: Option<&'static str>,
+}
+
 impl MigezApp {
+    /// Pdfrp: when `bytes` named `name` is a UDF file with an electronic signature, hold it back
+    /// behind `Dialog::UdfSigned` and say so: the caller converts nothing. Other files pass.
+    pub(crate) fn hold_signed_udf(&mut self, name: &str, path: Option<&str>, bytes: &[u8], then: Option<&'static str>) -> bool {
+        if migez_engine::source_kind(name, bytes) != Some(migez_engine::SourceKind::Udf) || !migez_engine::udf_signed(bytes) {
+            return false;
+        }
+        self.pending_udf.push_back(PendingUdf { name: name.to_owned(), path: path.map(str::to_owned), bytes: bytes.to_vec(), then });
+        true
+    }
+
+    /// Pdfrp: convert the signed UDF file the user agreed to, the first one held back.
+    pub(crate) fn convert_pending_udf(&mut self) {
+        let Some(p) = self.pending_udf.pop_front() else { return };
+        match self.open_converted(&p.name, &p.bytes) {
+            Some(Ok(())) => {
+                self.remember_converted_from(p.path.as_deref());
+                if let Some(command) = p.then {
+                    self.execute(command);
+                }
+            }
+            Some(Err(error)) => self.notify_fmt("Couldn't open {name}: {e}", &[("name", &p.name), ("e", &error)]),
+            None => {}
+        }
+    }
+
     /// Convert a non-PDF file (image, text, Office document) into a new tab. Returns `None` when
     /// `bytes` is not something Create understands (the caller then tries to open it as a PDF).
     /// An Office document blocks while LibreOffice runs: File ▸ Open converts it on the open
     /// worker instead ([`Self::open_converted_pdf`]), leaving this for startup and inline opens.
     pub(crate) fn open_converted(&mut self, name: &str, bytes: &[u8]) -> Option<Result<(), String>> {
         use migez_engine::SourceKind;
-        if !matches!(migez_engine::source_kind(name, bytes), Some(SourceKind::Image | SourceKind::Text | SourceKind::Office)) {
+        let kind = migez_engine::source_kind(name, bytes);
+        if !matches!(kind, Some(SourceKind::Image | SourceKind::Text | SourceKind::Office | SourceKind::Udf)) {
             return None;
         }
         let created = self.session.convert_to_pdf(name, &Arc::new(bytes.to_vec())).map(|(_, pdf)| pdf);
-        Some(self.open_converted_pdf(name, created.map_err(|e| e.to_string())))
+        let opened = self.open_converted_pdf(name, created.map_err(|e| e.to_string()));
+        // Pdfrp: a UDF file becomes a new PDF: its tab says so, and what the PDF is not. The
+        // note is the tab's own, above its pages, until it is dismissed.
+        if opened.is_ok()
+            && kind == Some(SourceKind::Udf)
+            && let Some(view) = self.views.last_mut()
+        {
+            view.converted_note = Some(udf_note(name, migez_engine::udf_signed(bytes)));
+        }
+        Some(opened)
     }
 
     /// Open `created`, the PDF converted from the file `name`, as a new, unsaved tab named after

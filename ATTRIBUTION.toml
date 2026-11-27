@@ -2924,3 +2924,22 @@ licence_file = "assets/icons/LICENSE-lucide.txt"
 kind = "icon"
 usage = "UI icon, embedded via crates/ui-egui/src/icon_data.rs"
 sha256 = "864ab2f19254e6ac7240bc6a98323197332e8f714d4d3f94831f41309e5ef2f7"
+
+# Pdfrp 1.2.0: the language modules of offline translation, Mozilla's Firefox Translations models.
+# Not in this repository and not downloaded by the build: the desktop app downloads a module only
+# when the user agrees, from this repository's models-v3.0 release, where they are republished
+# unmodified, and checks every file by SHA-256 before and after unpacking. The manifest lists each
+# file with Mozilla's own SHA-256 (attachment.hash and decompressedHash). MPL-2.0 is the one licence
+# outside the asset allowlist, allowed for these models only (xtask/src/assets.rs, MODELS_LICENCE),
+# by the owner's decision of 27.11.2026 after the legal review of 26.11.2026. The statement is
+# Mozilla's trademark policy's, printed right after the source (legal review, 27.11.2026).
+[[downloaded]]
+manifest = "crates/translate/models-v3.0.json"
+title = "Firefox Translations models (Pdfrp language modules 3.0)"
+author = "Mozilla"
+source = "https://github.com/mozilla/translations"
+licence = "MPL-2.0"
+licence_file = "vendor/fxtranslate/LICENSE"
+kind = "model"
+usage = "Offline translation (Edit ▸ Translate…): one module per direction into or out of English, downloaded on the user's say-so into %LOCALAPPDATA%\\Pdfrp\\models and run by pdfrp-ceviri.exe"
+statement = "Pdfrp is not officially associated with Mozilla or its products."

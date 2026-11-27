@@ -114,13 +114,19 @@ fn current_version() -> Result<Version, CheckError> {
     Version::parse(migez_engine::build_info::PRODUCT_VERSION).ok_or_else(|| CheckError::Invalid("the running version isn't a version".into()))
 }
 
+/// The User-Agent every request of the app carries (`Pdfrp/<version>`): the update check's and,
+/// since 1.2.0, the language modules' downloads (`translate`), through the same client
+/// (`migez_update::github_transport`).
+pub(crate) fn user_agent() -> String {
+    migez_update::user_agent(migez_engine::build_info::PRODUCT_VERSION)
+}
+
 /// The transport and address `source` reads from.
 fn open(source: &UpdateSource) -> Result<(Arc<dyn Transport>, String), CheckError> {
     match source {
         UpdateSource::Off => Err(CheckError::Refused("this copy doesn't check for updates".into())),
         UpdateSource::Environment => {
-            let user_agent = migez_update::user_agent(migez_engine::build_info::PRODUCT_VERSION);
-            let (transport, url) = migez_update::Source::from_env()?.open(&user_agent)?;
+            let (transport, url) = migez_update::Source::from_env()?.open(&user_agent())?;
             Ok((Arc::from(transport), url))
         }
         UpdateSource::Fake(transport, url) => Ok((transport.clone(), url.clone())),

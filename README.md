@@ -11,11 +11,11 @@
 </p>
 
 <h3 align="center">
-  <a href="https://github.com/ceceys/pdfrp/releases/download/v1.1.0/Pdfrp.Kurulum.1.1.0.exe">⬇ Pdfrp'yi indir</a>
+  <a href="https://github.com/ceceys/pdfrp/releases/download/v1.2.0/Pdfrp.Kurulum.1.2.0.exe">⬇ Pdfrp'yi indir</a>
 </h3>
 
 <p align="center">
-  Pdfrp 1.1.0 · Windows 10 ve 11, 64 bit · yaklaşık 26 MB<br>
+  Pdfrp 1.2.0 · Windows 10 ve 11, 64 bit · yaklaşık 33 MB<br>
   macOS ve Linux sürümleri de eklenecektir.<br>
   <a href="https://github.com/ceceys/pdfrp/releases">Tüm sürümler</a> · <a href="#kurulum">Kurulum</a> · <a href="#english">English</a>
 </p>
@@ -24,9 +24,14 @@
 
 Pdfrp, Windows için Türkçe arayüzlü, açık kaynak bir PDF görüntüleyici ve düzenleyicidir.
 PDF okuma, yorumlama, form doldurma ve imzalama, sayfa düzenleme, birleştirme ve bölme, metin ve
-resim düzenleme, karartma, parola koruması ve Türkçe metin tanıma yapar. Belgeler bilgisayarda
-kalır: program hesap istemez, kullanım verisi göndermez; internete yalnız aşağıdaki güncelleme
-denetimi için bağlanır. Programın adı “Pdf For Friday” ifadesinden gelir.
+resim düzenleme, karartma, parola koruması, Türkçe metin tanıma ve çevrimdışı çeviri yapar.
+Belgeler bilgisayarda kalır: program hesap istemez, kullanım verisi göndermez. Pdfrp internete
+yalnız iki iş için bağlanır: yeni sürüm denetimi ve sizin onayladığınız dil modüllerinin
+indirilmesi. İkisi de Pdfrp'nin GitHub sayfasından yapılır. İstekte, istenen adres dışında yalnız
+program adı ve sürümü bulunur; dil modülü indirilirken bu adres hangi modülün indirildiğini
+gösterir. GitHub, her web isteğinde olduğu gibi IP adresinizi görür. Çeviri tamamen
+bilgisayarınızda yapılır; belgeleriniz ve çevirdiğiniz metin hiçbir yere gönderilmez. Programın
+adı “Pdf For Friday” ifadesinden gelir.
 
 Araç düzeni, masaüstü PDF programlarına alışık kullanıcıların yadırgamayacağı biçimde kuruldu: solda araçlar, üstte sekmeler, sağda panel.
 
@@ -40,15 +45,23 @@ Araç düzeni, masaüstü PDF programlarına alışık kullanıcıların yadırg
 - **Türkçe metin tanıma (OCR):** taranmış sayfalar Windows'un kendi metin tanıma motoruyla
   aranabilir ve kopyalanabilir metne dönüşür (Windows'ta Türkçe metin tanıma özelliği yüklüyse).
 - **Word, Excel ve PowerPoint dosyalarından PDF'ye dönüştürme (bilgisayarda Microsoft Office kuruluysa).**
+- **UDF dosyaları:** UYAP Doküman Editörü'nün kullandığı UDF dosyalarını başka bir program
+  gerekmeden açın, okuyun ve PDF'ye dönüştürün. Dosyadaki elektronik imza PDF'ye taşınmaz;
+  dönüştürülen PDF imzalı belgenin yerine geçmez. Pdfrp'nin Adalet Bakanlığı ya da UYAP ile bir
+  bağlantısı yoktur; bu özellik Bakanlıkça onaylanmış ya da desteklenmiş değildir.
+- **Çevrimdışı çeviri:** Seçtiğiniz metni internete göndermeden, doğrudan bilgisayarınızda çevirin.
+  İngilizce ile 57 dil arasında iki yönde çalışır; öteki dil çiftleri İngilizce üzerinden çevrilir.
+  Yalnız ihtiyaç duyduğunuz dilin modülünü indirirsiniz. Makine çevirisidir; hukuki ve resmî
+  işlerde belgenin aslını esas alın.
 - **Gezgin'den:** dosyaya sağ tıklayıp "Pdfrp ile PDF'ye dönüştür" (Office belgeleri,
-  resimler, metin) ya da birkaç dosyayı seçip "Pdfrp'de birleştir". Windows 11'de bu
+  UDF dosyaları, resimler, metin) ya da birkaç dosyayı seçip "Pdfrp'de birleştir". Windows 11'de bu
   komutlar sağ tık menüsünde "Diğer seçenekleri göster" altındadır.
 - **Görüntü olarak dışa aktarma:** sayfaları JPEG, PNG ya da TIFF olarak kaydetme.
 - **Birleştirme ve sayfa düzenleme:** dosyaları birleştirme, sayfa ekleme, silme, döndürme,
   sıralama, ayırma ve bölme.
 - **Formlar:** form doldurma ve form alanı hazırlama.
 - **Damga ve yorum:** hazır ve özel damgalar, notlar, vurgulama, çizim.
-- **Metin düzeltme:** PDF'teki var olan metni yerinde düzeltme (sınırlarıyla) ve yeni metin
+- **Metin düzeltme:** PDF'deki var olan metni yerinde düzeltme (sınırlarıyla) ve yeni metin
   ekleme; Türkçe harfler korunur.
 
 <p align="center">
@@ -63,7 +76,7 @@ Araç düzeni, masaüstü PDF programlarına alışık kullanıcıların yadırg
 ## Kurulum
 
 1. Kurulum dosyasını indirin (Windows 10 ya da 11, 64 bit):
-   [Pdfrp 1.1.0](https://github.com/ceceys/pdfrp/releases/download/v1.1.0/Pdfrp.Kurulum.1.1.0.exe).
+   [Pdfrp 1.2.0](https://github.com/ceceys/pdfrp/releases/download/v1.2.0/Pdfrp.Kurulum.1.2.0.exe).
    Bütün sürümler [Releases](https://github.com/ceceys/pdfrp/releases) sayfasındadır. Sürüm
    sayfasında `Pdfrp Kurulum X.Y.Z.exe` görünür; indirdiğiniz dosyanın adı
    `Pdfrp.Kurulum.X.Y.Z.exe` olabilir. Kurulu Pdfrp sonraki sürümleri kendisi bulur (aşağıda).
@@ -89,6 +102,23 @@ Pdfrp, açılışta (günde en çok bir kez) ve Yardım menüsünden ("Güncelle
   <img src="docs/ekran/06-guncelleme.png" alt="Güncelleme bildirimi (örnek)" width="480">
 </p>
 
+## Çevrimdışı çeviri
+
+Bir dili ilk kez seçtiğinizde Pdfrp, gereken dil modülünü onayınızı alarak indirir; boyutu indirme
+penceresinde gösterilir. İngilizce ile 57 dil arasında doğrudan çeviri yapılır. İki dil arasında
+İngilizce yoksa, örneğin Türkçeden Almancaya, metin önce İngilizceye, sonra hedef dile çevrilir ve
+iki modül gerekir. Aynı metin, bilgisayarın işlemcisine bağlı olarak küçük farklarla çevrilebilir.
+Makine çevirisi hata içerebilir; hukuki, resmî ya da sözleşmeye dayalı işlerde belgenin aslını esas
+alın.
+
+Çeviri modelleri Mozilla'nın Firefox Translations projesinin açık modelleridir ve Mozilla Public
+License 2.0 ile dağıtılır. Modeller değiştirilmeden Pdfrp'nin GitHub Release sayfasında yeniden
+yayımlanır; kaynakları github.com/mozilla/translations adresindedir (önceki model deposu:
+github.com/mozilla/firefox-translations-models). Çeviri motoru, fxtranslate kitaplığının (MPL-2.0)
+Pdfrp için değiştirilmiş bir sürümünü kullanır; değişiklik dahil kaynak kodu bu depoda
+`vendor/fxtranslate` klasöründedir. Pdfrp'nin Mozilla ya da Mozilla ürünleriyle bir bağlantısı
+yoktur ve Mozilla tarafından desteklenmez.
+
 ## Kaynaktan derleme
 
 Gerekenler:
@@ -102,6 +132,16 @@ Gerekenler:
 cargo build --release --locked -p migez-pdf      # program: target/release/migez-pdf.exe
 cargo run -p migez-pdf -- belge.pdf              # geliştirme derlemesiyle bir belge açar
 cargo test -p migez-update                       # bir paketin sınamaları
+```
+
+Çeviri yardımcısı `pdfrp-ceviri` iki kez derlenir; kurulum ikisini de kurar, Pdfrp işlemcinin
+çalıştırabildiğini başlatır. AVX2 derlemesi bir C++ derleyicisi ister (MSVC ya da MinGW-w64 g++);
+`FXTRANSLATE_REQUIRE_SIMD=1` AVX2 çekirdeği derlenemezse derlemeyi durdurur, `CXXSTDLIB_STATIC=1`
+C++ kitaplığını exe'ye gömer:
+
+```sh
+FXTRANSLATE_REQUIRE_SIMD=1 CXXSTDLIB_STATIC=1 cargo build --release --locked -p pdfrp-ceviri
+cargo build --release --locked -p pdfrp-ceviri --no-default-features --features portable
 ```
 
 Arayüz çevirileri depodaki `i18n/` klasöründen derlemeye gömülür; başka bir kopya
@@ -123,6 +163,8 @@ Geliştirme notları `docs/development.md` dosyasındadır.
 
 Pdfrp'nin kaynak kodu MIT Lisansı ile sunulur (`LICENSE-MIT`). Pdfrp, MIT veya Apache-2.0 seçimli lisansla yayımlanmış açık kaynak bir PDF programının işlenmesidir; üst kaynağın adı, telif bildirimi ve yapılan değişikliklere ilişkin not `NOTICE` dosyasındadır. `licenses/LICENSE-APACHE-upstream.txt`, üst kaynağın ve bazı bileşenlerin seçimli lisans metni olarak depoda durur. Yazı tipleri, simgeler ve öteki varlıklar kendi lisanslarıyla dağıtılır; kaynakları ve lisansları `ATTRIBUTION.md` dosyasındadır.
 
+`vendor/fxtranslate` klasöründeki çeviri motoru (fxtranslate 0.5.0, Pdfrp'nin değişiklikleriyle) MIT değil, Mozilla Public License 2.0 ile dağıtılır (`vendor/fxtranslate/LICENSE`; değişiklikler `vendor/fxtranslate/PDFRP-DEGISIKLIKLER.md`); içindeki gemmology (MIT) ve xsimd (BSD-3-Clause) kendi lisanslarıyla gelir. İndirilen dil modülleri de MPL-2.0'dır (bkz. Çevrimdışı çeviri).
+
 Pdfrp adı ve logosu MIT lisansının kapsamında değildir; değiştirilmiş sürümlerde çıkarılır ya da değiştirilir (`assets/pdfrp/LICENSE.txt`).
 
 Programa derlenen üçüncü taraf Rust bileşenlerinin lisansları kurulumdaki `lisanslar` klasöründe,
@@ -134,11 +176,42 @@ Pdfrp is an open-source PDF viewer and editor for Windows with a Turkish interfa
 annotates, fills and signs PDFs, organizes, combines and splits pages, edits text and images,
 redacts, protects with passwords, turns scanned pages into searchable, copyable text with Windows'
 own text recognition (when Windows' Turkish OCR feature is installed), converts Word, Excel and
-PowerPoint files to PDF when Microsoft Office is installed, and exports pages as JPEG, PNG or TIFF.
-The name comes from “Pdf For Friday”.
+PowerPoint files to PDF when Microsoft Office is installed, exports pages as JPEG, PNG or TIFF, and
+translates selected text offline. The name comes from “Pdf For Friday”.
 
-- **Download:** [Pdfrp 1.1.0 installer](https://github.com/ceceys/pdfrp/releases/download/v1.1.0/Pdfrp.Kurulum.1.1.0.exe)
-  (Windows 10 or 11, 64-bit, about 26 MB). The installed app finds later versions by itself.
+Pdfrp connects to the internet for two things only: checking for a new version and downloading
+language modules you have approved. Both come from Pdfrp's GitHub page. Besides the address it
+asks for, the request carries only the program's name and version; when a language module is
+downloaded, that address shows which module it is. GitHub sees your IP address, as with any web
+request. Translation runs entirely on your computer; your documents and the text you translate are
+not sent anywhere.
+
+Opens UDF files used by the UYAP Document Editor and converts them to PDF. The electronic
+signature in the file is not carried over; the converted PDF does not replace the signed document.
+Pdfrp is not affiliated with the Turkish Ministry of Justice or UYAP, and this feature is not
+endorsed or supported by the Ministry.
+
+- **Offline translation:** Translate selected text right on your computer, without sending it to
+  the internet. Works in both directions between English and 57 languages; other language pairs are
+  translated via English. You download modules only for the languages you need. This is machine
+  translation; for legal or official matters, rely on the original document.
+- **How translation works:** The first time you choose a language, Pdfrp asks you and then
+  downloads the language module it needs; the size is shown in the download window. Translation
+  between English and 57 languages is direct. When neither language is English, for example
+  Turkish to German, the text is translated into English first and then into the target language,
+  which needs two modules. The same text may be translated slightly differently depending on the
+  computer's processor. Machine translation may contain errors; for legal, official or contractual
+  matters, rely on the original document.
+- **Translation models:** The translation models are open models from Mozilla's Firefox
+  Translations project and are distributed under the Mozilla Public License 2.0. They are
+  republished unmodified on Pdfrp's GitHub Releases page; their sources are at
+  github.com/mozilla/translations (earlier model repository:
+  github.com/mozilla/firefox-translations-models). The translation engine uses a version of the
+  fxtranslate library (MPL-2.0) modified for Pdfrp; its source code, including the changes, is in
+  this repository's `vendor/fxtranslate` folder. Pdfrp is not officially associated with Mozilla
+  or its products and is not endorsed by Mozilla.
+- **Download:** [Pdfrp 1.2.0 installer](https://github.com/ceceys/pdfrp/releases/download/v1.2.0/Pdfrp.Kurulum.1.2.0.exe)
+  (Windows 10 or 11, 64-bit, about 33 MB). The installed app finds later versions by itself.
   macOS and Linux versions will be added.
 - **Install:** all versions are on [Releases](https://github.com/ceceys/pdfrp/releases). The release page shows
   `Pdfrp Kurulum X.Y.Z.exe`; the file you download may be named
@@ -153,14 +226,20 @@ The name comes from “Pdf For Friday”.
   SHA-256 before it runs. Choosing “Update now” closes Pdfrp and opens the new version's
   setup wizard, where you can go on or cancel. Preferences ▸ General & Interface turns the check at
   start off; Help ▸ Check for updates asks only when you choose it. The update notice pictured in
-  the Turkish section is an example: the version it names has not been released.
-- **Build:** `cargo build --release --locked -p migez-pdf` (Rust 1.95+); the installer with
-  Inno Setup 6 (`kurulum\pdfrp.iss`).
+  the Turkish section is an example.
+- **Build:** `cargo build --release --locked -p migez-pdf` (Rust 1.95+); the translation helper
+  twice, `FXTRANSLATE_REQUIRE_SIMD=1 CXXSTDLIB_STATIC=1 cargo build --release --locked -p pdfrp-ceviri`
+  (AVX2, needs a C++ compiler) and with `--no-default-features --features portable`; the
+  installer with Inno Setup 6 (`kurulum\pdfrp.iss`).
 - **License:** the source code is offered under the MIT License (`LICENSE-MIT`). Pdfrp is a
   derivative of an open-source PDF application released under MIT or Apache-2.0; its name,
-  copyright notice and a note on the changes are in `NOTICE`. The Pdfrp name and logo are
-  not covered by the MIT License; modified versions must remove or replace them
-  (`assets/pdfrp/LICENSE.txt`).
+  copyright notice and a note on the changes are in `NOTICE`. The translation engine in
+  `vendor/fxtranslate` (fxtranslate 0.5.0 with Pdfrp's changes) is under the Mozilla Public
+  License 2.0, not MIT (`vendor/fxtranslate/LICENSE`; the changes are in
+  `vendor/fxtranslate/PDFRP-DEGISIKLIKLER.md`); the gemmology (MIT) and xsimd (BSD-3-Clause)
+  headers it bundles keep their own licences. The downloaded language modules are MPL-2.0 too
+  (see Translation models above). The Pdfrp name and logo are not covered by the MIT License;
+  modified versions must remove or replace them (`assets/pdfrp/LICENSE.txt`).
 - **Trademarks:** product and company names mentioned may be trademarks of their owners. Pdfrp
   is an independent project; it is not affiliated with, sponsored or endorsed by those companies.
 

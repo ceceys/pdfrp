@@ -36,6 +36,22 @@ pub const ALLOWED_LICENCES: &[&str] = &[
     "LicenseRef-Public-Domain",
 ];
 
+/// Pdfrp 1.2.0: the one licence outside [`ALLOWED_LICENCES`], for one thing only: Mozilla's
+/// Firefox Translations models, which the desktop app downloads at run time, after the user agrees,
+/// from this repository's own release ([`MODELS_RELEASES`]), unmodified: a `[[downloaded]]` entry
+/// of kind `model` whose source is [`MODELS_SOURCE`]. The owner allowed it on 27.11.2026 after the
+/// legal review of 26.11.2026. fxtranslate's code, the other MPL-2.0 exception, is a dependency
+/// (deny.toml), not an asset.
+pub const MODELS_LICENCE: &str = "MPL-2.0";
+/// Where those models come from.
+pub const MODELS_SOURCE: &str = "https://github.com/mozilla/translations";
+/// Where Pdfrp republishes them; every file of the exception must be downloaded from here.
+pub const MODELS_RELEASES: &str = "https://github.com/ceceys/pdfrp/releases/download/";
+/// Mozilla's trademark policy asks a project that says it is based on Mozilla's technology to say,
+/// equally prominently, that it isn't associated with Mozilla (legal review, 27.11.2026): the
+/// models' entry carries this statement, and ATTRIBUTION.md prints it right after the source.
+pub const MODELS_STATEMENT: &str = "Pdfrp is not officially associated with Mozilla or its products.";
+
 /// Pdfrp's own name and logo: rights reserved except the permissions in assets/pdfrp/LICENSE.txt,
 /// outside the MIT licence, distributed unmodified with the program (Cuma Ali Dirik, 25.11.2026).
 /// Not on [`ALLOWED_LICENCES`]: it is allowed for the icons and logos in [`OWN_MARKS_DIR`] only.
@@ -69,6 +85,55 @@ pub struct Manifest {
     pub fetched: Vec<Fetched>,
     #[serde(default)]
     pub build_input: Vec<BuildInput>,
+    #[serde(default)]
+    pub downloaded: Vec<Downloaded>,
+}
+
+/// Files the desktop app downloads at run time, only when the user agrees, as a manifest embedded
+/// in the app lists them (Pdfrp 1.2.0: the language modules). One entry per manifest; the manifest
+/// holds each file's address and SHA-256, and ATTRIBUTION.md lists every file from it.
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct Downloaded {
+    /// The manifest, a path in this repository (`base_url`, `directions[].files[]` with `asset`,
+    /// `sha256` and `unpacked_sha256`).
+    pub manifest: String,
+    pub title: String,
+    pub author: String,
+    pub source: String,
+    pub licence: String,
+    pub licence_file: String,
+    pub kind: String,
+    pub usage: String,
+    /// A sentence ATTRIBUTION.md prints right after the source, as it is (the models:
+    /// [`MODELS_STATEMENT`]).
+    #[serde(default)]
+    pub statement: Option<String>,
+}
+
+/// One file a `[[downloaded]]` manifest lists.
+pub struct DownloadedFile {
+    pub asset: String,
+    pub url: String,
+    pub sha256: String,
+    pub unpacked_sha256: String,
+}
+
+/// The files `d`'s manifest lists.
+pub fn downloaded_files(root: &Path, d: &Downloaded) -> Result<Vec<DownloadedFile>, String> {
+    let path = root.join(&d.manifest);
+    let text = std::fs::read_to_string(&path).map_err(|e| format!("{}: {e}", d.manifest))?;
+    let v: serde_json::Value = serde_json::from_str(&text).map_err(|e| format!("{}: {e}", d.manifest))?;
+    let base = v["base_url"].as_str().ok_or_else(|| format!("{}: no base_url", d.manifest))?;
+    let mut out = Vec::new();
+    for direction in v["directions"].as_array().into_iter().flatten() {
+        for f in direction["files"].as_array().into_iter().flatten() {
+            let field = |k: &str| f[k].as_str().map(str::to_owned).ok_or_else(|| format!("{}: a file without `{k}`", d.manifest));
+            let asset = field("asset")?;
+            out.push(DownloadedFile { url: format!("{base}{asset}"), asset, sha256: field("sha256")?, unpacked_sha256: field("unpacked_sha256")? });
+        }
+    }
+    Ok(out)
 }
 
 /// Material compiled in only when the builder opts in (e.g. `MIGEZ_FONTS_DIR`): not in this
@@ -162,7 +227,7 @@ pub fn sha256_hex(bytes: &[u8]) -> String {
 pub fn run(args: &[String]) -> Result<()> {
     let root = root();
     let manifest = load(&root)?;
-    let markdown = render_markdown(&manifest);
+    let markdown = render_markdown(&root, &manifest);
     if args.iter().any(|a| a == "--write") {
         std::fs::write(root.join("ATTRIBUTION.md"), &markdown)?;
         println!("assets: wrote ATTRIBUTION.md");
@@ -173,11 +238,13 @@ pub fn run(args: &[String]) -> Result<()> {
         _ => problems.push("ATTRIBUTION.md is out of date: run `cargo xtask assets --write`".into()),
     }
     if problems.is_empty() {
+        let downloaded: usize = manifest.downloaded.iter().map(|d| downloaded_files(&root, d).map_or(0, |f| f.len())).sum();
         println!(
-            "assets: ok ({} repository assets, {} bundled by dependencies, {} fetched at build time)",
+            "assets: ok ({} repository assets, {} bundled by dependencies, {} fetched at build time, {} downloaded at run time)",
             manifest.asset.len(),
             manifest.bundled.len(),
-            manifest.fetched.len()
+            manifest.fetched.len(),
+            downloaded
         );
         Ok(())
     } else {
@@ -324,7 +391,48 @@ pub fn check(root: &Path, m: &Manifest, repo_files: &[String], lock: &BTreeSet<(
             problems.push(format!("{}: URLs must be https", b.name));
         }
     }
+    for d in &m.downloaded {
+        check_downloaded(root, d, &mut problems);
+    }
     problems
+}
+
+/// The policy checks of one `[[downloaded]]` entry (Pdfrp 1.2.0).
+fn check_downloaded(root: &Path, d: &Downloaded, problems: &mut Vec<String>) {
+    let what = &d.manifest;
+    let files = match downloaded_files(root, d) {
+        Ok(files) if !files.is_empty() => files,
+        Ok(_) => return problems.push(format!("{what}: the manifest lists no files")),
+        Err(e) => return problems.push(e),
+    };
+    // MPL-2.0 only for Mozilla's translation models, from our own release (MODELS_LICENCE).
+    if d.licence == MODELS_LICENCE {
+        if d.kind != "model" || d.source != MODELS_SOURCE || files.iter().any(|f| !f.url.starts_with(MODELS_RELEASES)) {
+            problems.push(format!(
+                "{what}: {MODELS_LICENCE} is allowed only for Mozilla's translation models ({MODELS_SOURCE}) downloaded from {MODELS_RELEASES}"
+            ));
+        }
+        if d.statement.as_deref() != Some(MODELS_STATEMENT) {
+            problems.push(format!("{what}: Mozilla's models need statement = \"{MODELS_STATEMENT}\" (Mozilla's trademark policy)"));
+        }
+    } else {
+        for id in licence_ids(&d.licence).filter(|id| !ALLOWED_LICENCES.contains(id)) {
+            problems.push(format!("{what}: licence `{id}` is not on the allowlist (AGENTS.md §1.2)"));
+        }
+    }
+    if !root.join(&d.licence_file).is_file() {
+        problems.push(format!("{what}: licence file {} is missing", d.licence_file));
+    }
+    if mentions_adobe(&d.author) || mentions_adobe(&d.source) || mentions_adobe(&d.title) {
+        problems.push(format!("{what}: material from Adobe is forbidden (AGENTS.md §1.1)"));
+    }
+    if !d.source.starts_with("https://") {
+        problems.push(format!("{what}: URLs must be https"));
+    }
+    let hash = |s: &str| s.len() == 64 && s.bytes().all(|b| b.is_ascii_hexdigit());
+    for f in files.iter().filter(|f| !f.url.starts_with("https://") || !hash(&f.sha256) || !hash(&f.unpacked_sha256)) {
+        problems.push(format!("{what}: {} needs an https address and both SHA-256 values", f.asset));
+    }
 }
 
 /// Download (if needed) and verify every `[[fetched]]` entry of `kind` into `dir`, with its licence
@@ -388,8 +496,9 @@ fn models_attribution(m: &Manifest) -> String {
     s
 }
 
-/// ATTRIBUTION.md, generated from the manifest.
-pub fn render_markdown(m: &Manifest) -> String {
+/// ATTRIBUTION.md, generated from the manifest (and the `[[downloaded]]` entries' own manifests
+/// under `root`).
+pub fn render_markdown(root: &Path, m: &Manifest) -> String {
     let mut s = String::new();
     s.push_str("# Attribution\n\n");
     s.push_str("<!-- Generated from ATTRIBUTION.toml by `cargo xtask assets --write`. Do not edit by hand. -->\n\n");
@@ -451,6 +560,25 @@ pub fn render_markdown(m: &Manifest) -> String {
             esc(&b.usage)
         );
     }
+    for d in &m.downloaded {
+        let files = downloaded_files(root, d).unwrap_or_default();
+        let _ = write!(
+            s,
+            "\n## Downloaded at run time: {} ({})\n\nNot in this repository and not downloaded by the build. The desktop app downloads a file only when the user agrees, from the address below, and checks it by SHA-256 before and after unpacking; `{}` lists them.\n\n- Author: {}\n- Licence: {} (`{}`)\n- Source: {}\n{}- Used for: {}\n\n| File | SHA-256 (as published) | SHA-256 unpacked |\n|---|---|---|\n",
+            esc(&d.title),
+            files.len(),
+            d.manifest,
+            esc(&d.author),
+            d.licence,
+            d.licence_file,
+            esc(&d.source),
+            d.statement.as_deref().map(|s| format!("- {}\n", esc(s))).unwrap_or_default(),
+            esc(&d.usage)
+        );
+        for f in &files {
+            let _ = writeln!(s, "| [`{}`]({}) | `{}` | `{}` |", f.asset, f.url, f.sha256, f.unpacked_sha256);
+        }
+    }
     s
 }
 
@@ -499,6 +627,45 @@ mod tests {
             sha256: "0".repeat(64),
             adobe_data,
         }
+    }
+
+    /// Pdfrp 1.2.0: MPL-2.0 passes for Mozilla's translation models downloaded from our release,
+    /// and for nothing else: not another kind, source or address, and never for an asset here.
+    #[test]
+    fn mpl_is_allowed_only_for_mozillas_translation_models_from_our_release() {
+        let models = || Downloaded {
+            manifest: "crates/translate/models-v3.0.json".into(),
+            title: "t".into(),
+            author: "Mozilla".into(),
+            source: MODELS_SOURCE.into(),
+            licence: MODELS_LICENCE.into(),
+            licence_file: "vendor/fxtranslate/LICENSE".into(),
+            kind: "model".into(),
+            usage: "u".into(),
+            statement: Some(MODELS_STATEMENT.into()),
+        };
+        let check_one = |d: Downloaded| check(&root(), &Manifest { downloaded: vec![d], ..Default::default() }, &[], &lock(&[]));
+        assert!(check_one(models()).is_empty(), "{:?}", check_one(models()));
+        assert_eq!(check_one(Downloaded { kind: "font".into(), ..models() }).len(), 1, "another kind");
+        assert_eq!(check_one(Downloaded { source: "https://example.org/models".into(), ..models() }).len(), 1, "another source");
+        assert!(!check_one(Downloaded { licence: "GPL-3.0".into(), ..models() }).is_empty(), "another licence");
+        assert!(!check_one(Downloaded { manifest: "Cargo.toml".into(), ..models() }).is_empty(), "not a manifest");
+        assert!(check_one(Downloaded { licence: "MIT".into(), kind: "data".into(), ..models() }).is_empty(), "an allowed licence anywhere");
+        // Mozilla's trademark policy: the models carry the statement, word for word.
+        assert_eq!(check_one(Downloaded { statement: None, ..models() }).len(), 1, "no statement");
+        assert_eq!(check_one(Downloaded { statement: Some("Pdfrp is not affiliated with Mozilla.".into()), ..models() }).len(), 1, "another one");
+        let mpl_asset = Manifest { asset: vec![asset("Cargo.toml", "Someone", "data", MODELS_LICENCE)], ..Default::default() };
+        assert!(check(&root(), &mpl_asset, &[], &lock(&[])).iter().any(|p| p.contains("not on the allowlist")), "never for an asset");
+        // The real entry lists every file of the embedded manifest with its address on our release,
+        // and ATTRIBUTION.md says, right after the source, that Pdfrp isn't associated with Mozilla.
+        let m = load(&root()).unwrap();
+        let d = m.downloaded.first().expect("the language modules are attributed");
+        let files = downloaded_files(&root(), d).unwrap();
+        assert_eq!(files.len(), 233);
+        assert!(files.iter().all(|f| f.url.starts_with(MODELS_RELEASES)));
+        let md = render_markdown(&root(), &m);
+        assert!(md.contains("Downloaded at run time"));
+        assert!(md.contains(&format!("- Source: {MODELS_SOURCE}\n- {MODELS_STATEMENT}\n- Used for: ")), "the statement follows the source");
     }
 
     #[test]

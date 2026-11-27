@@ -16,4 +16,7 @@ pub mod ui_scale;
 // Pdfrp 1.1.0: Help ▸ Check for updates… and the check at start, its own (not upstream's).
 #[cfg(not(target_arch = "wasm32"))]
 pub mod updates;
+// Pdfrp 1.2.0: offline translation (Edit ▸ Translate…, Preferences ▸ Language modules).
+#[cfg(not(target_arch = "wasm32"))]
+pub mod translate;
 pub mod window_controls;

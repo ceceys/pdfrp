@@ -13,6 +13,14 @@
 # Derleme yerel sürüm derlemesiyle aynı ayarlarla yapılır: LTO kapalı, 16 kod üretim birimi.
 # Çeviriler depodaki i18n/ klasöründen gömülür; craft-fonts kullanılmaz (NOTICE).
 #
+# 1.2.0: çevrimdışı çevirinin yardımcısı pdfrp-ceviri iki kez derlenir (AVX2 ve portable) ve
+# kurulumda ceviri\avx2\ ile ceviri\portable\ altına girer. FXTRANSLATE_REQUIRE_SIMD=1: fxtranslate'in
+# C++ AVX2 çekirdeği derlenemezse derleme durur (yoksa sessizce skaler çekirdeğe düşerdi).
+# CXXSTDLIB_STATIC=1: GNU'da C++ kitaplığını gömer; MSVC'de C++ kitaplığı C çalışma zamanıyla
+# birlikte zaten statiktir (+crt-static). MSVC'de AVX2 bayrağı /arch:AVX2'dir (vendor/fxtranslate
+# build.rs yaması). Bu yol yerelde (GNU araç zinciri) sınanamadı; ilk sınaması bu iş akışıdır.
+# Dil modülleri kuruluma girmez: "models-v3.0" Release'inden kullanıcı onaylayınca indirilir.
+#
 # Eylemler sürüm etiketiyle değil, işleme (commit) SHA'sıyla sabitlenir; yorumdaki sürüm yalnız
 # okuyan içindir. Depo alındıktan sonra GitHub jetonu diske yazılmaz (persist-credentials: false):
 # derleme betikleri onu okuyamaz; jeton yalnız son adımda (Sürümü yayımla) ortam değişkeniyle verilir.
@@ -48,6 +56,9 @@ jobs:
       CARGO_PROFILE_RELEASE_LTO: 'off'
       CARGO_PROFILE_RELEASE_CODEGEN_UNITS: '16'
       CARGO_TARGET_X86_64_PC_WINDOWS_MSVC_RUSTFLAGS: '-C target-feature=+crt-static'
+      # 1.2.0: çeviri yardımcısının AVX2 çekirdeği derlenmeli; C++ kitaplığı exe'ye gömülür.
+      FXTRANSLATE_REQUIRE_SIMD: '1'
+      CXXSTDLIB_STATIC: '1'
     defaults:
       run:
         shell: pwsh
@@ -94,6 +105,14 @@ jobs:
       - name: Güncelleme denetiminin sınamaları
         run: cargo test --locked --offline -p migez-update --target $env:TARGET
 
+      # 1.2.0: dil modülleri (gömülü manifest, indirme doğrulaması, metin hazırlama) ve yardımcı.
+      - name: Çevirinin sınamaları
+        run: |
+          cargo test --locked --offline -p migez-translate --target $env:TARGET
+          if ($LASTEXITCODE -ne 0) { throw "migez-translate sınamaları geçmedi" }
+          cargo test --locked --offline -p pdfrp-ceviri --target $env:TARGET
+          if ($LASTEXITCODE -ne 0) { throw "pdfrp-ceviri sınamaları geçmedi" }
+
       - name: Sürüm derlemesi
         run: cargo build --release --locked --offline -p migez-pdf --target $env:TARGET
 
@@ -108,6 +127,24 @@ jobs:
           $info = (Get-Item $exe).VersionInfo
           "Ürün: $($info.ProductName) $($info.ProductVersion), dosya sürümü $($info.FileVersion)"
           if ($info.ProductVersion -ne $env:VERSION) { throw "Exe'nin ürün sürümü $($info.ProductVersion), beklenen $env:VERSION" }
+
+      # 1.2.0: iki derleme aynı exe adını üretir; her biri bitince kurulumdaki yerine kopyalanır ve
+      # durumu sorulur: AVX2 derlemesinin "kernel" alanı "avx2" olmalı.
+      - name: Çeviri yardımcısı (AVX2 ve portable)
+        run: |
+          foreach ($tur in @('avx2', 'portable')) {
+            $ozellik = @(); if ($tur -eq 'portable') { $ozellik = @('--no-default-features', '--features', 'portable') }
+            cargo build --release --locked --offline -p pdfrp-ceviri --target $env:TARGET @ozellik
+            if ($LASTEXITCODE -ne 0) { throw "pdfrp-ceviri ($tur) derlenemedi" }
+            $hedef = "dist/ceviri/$tur"
+            New-Item -ItemType Directory -Force -Path $hedef | Out-Null
+            Copy-Item "target/$env:TARGET/release/pdfrp-ceviri.exe" "$hedef/pdfrp-ceviri.exe" -Force
+            $durum = '{"op":"status"}' | & "$hedef/pdfrp-ceviri.exe" $hedef | ConvertFrom-Json
+            $beklenen = if ($tur -eq 'avx2') { 'avx2' } else { 'portable' }
+            "pdfrp-ceviri $tur : sürüm $($durum.version), çekirdek $($durum.kernel)"
+            if ($durum.kernel -ne $beklenen) { throw "pdfrp-ceviri $tur derlemesinin çekirdeği '$($durum.kernel)', beklenen '$beklenen'" }
+            if ($durum.version -ne $env:VERSION) { throw "pdfrp-ceviri sürümü $($durum.version), beklenen $env:VERSION" }
+          }
 
       - name: Üçüncü taraf lisans listesi
         run: ./kurulum/lisans-listesi.ps1 -Hedefler $env:TARGET
@@ -124,7 +161,7 @@ jobs:
             (Join-Path $env:ProgramFiles 'Inno Setup 6\ISCC.exe')
           ) | Where-Object { Test-Path $_ } | Select-Object -First 1
           if (-not $iscc) { $iscc = (Get-Command iscc.exe -ErrorAction Stop).Source }
-          & $iscc "/DSurum=$PWD\target\$env:TARGET\release" "/DAppVersion=$env:VERSION" kurulum\pdfrp.iss
+          & $iscc "/DSurum=$PWD\target\$env:TARGET\release" "/DCeviri=$PWD\dist\ceviri" "/DAppVersion=$env:VERSION" kurulum\pdfrp.iss
           if ($LASTEXITCODE -ne 0) { throw "ISCC çıkış kodu $LASTEXITCODE" }
 
       - name: SHA256SUMS.txt

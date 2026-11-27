@@ -82,6 +82,18 @@ Vendored (vendor/, patched; see vendor/README.md):
 - hayro 0.7.1 — Apache-2.0 OR MIT, Copyright the hayro authors (licence files kept in vendor/hayro).
 - hayro-interpret 0.7.0 — Apache-2.0 OR MIT, Copyright the hayro authors (LICENSE-APACHE, LICENSE-MIT kept in vendor/hayro-interpret).
 
+Offline translation (Pdfrp 1.2.0)
+
+pdfrp-ceviri.exe contains a version of fxtranslate 0.5.0 modified for Pdfrp (Mozilla Public License 2.0). Source code, including the changes: https://github.com/ceceys/pdfrp/tree/v1.2.0/vendor/fxtranslate. The language modules are Mozilla's Firefox Translations models (MPL-2.0), distributed unmodified. Source: https://github.com/mozilla/translations (earlier model repository: https://github.com/mozilla/firefox-translations-models). Pdfrp is not officially associated with Mozilla or its products.
+
+pdfrp-ceviri.exe, fxtranslate 0.5.0'ın Pdfrp için değiştirilmiş bir sürümünü içerir (Mozilla Public License 2.0). Değişiklik dahil kaynak kodu: https://github.com/ceceys/pdfrp/tree/v1.2.0/vendor/fxtranslate. Dil modülleri Mozilla'nın Firefox Translations modelleridir (MPL-2.0) ve değiştirilmeden dağıtılır. Kaynak: https://github.com/mozilla/translations (önceki model deposu: https://github.com/mozilla/firefox-translations-models). Pdfrp'nin Mozilla ya da Mozilla ürünleriyle bir bağlantısı yoktur.
+
+The Mozilla Public License 2.0: LICENSE-MPL-2.0.txt (installed beside this file; in the repository vendor/fxtranslate/LICENSE), https://mozilla.org/MPL/2.0/. The changes are listed in vendor/fxtranslate/PDFRP-DEGISIKLIKLER.md.
+
+fxtranslate bundles two C++ header libraries, unchanged, compiled into the AVX2 build of pdfrp-ceviri.exe:
+- gemmology — MIT, Copyright (c) 2023 Serge Guelton; its original 8-bit code Copyright (c) 2017--2019 University of Edinburgh, Nikolay Bogoychev, Mateusz Chudyk, Kenneth Heafield, and Microsoft Corporation. See vendor/fxtranslate/vendor/gemmology/LICENSE (installed as fxtranslate/gemmology-LICENSE.txt).
+- xsimd — BSD-3-Clause, Copyright (c) 2016, Johan Mabille, Sylvain Corlay, Wolf Vollprecht and Martin Renou; Copyright (c) 2016, QuantStack; Copyright (c) 2018, Serge Guelton. See vendor/fxtranslate/vendor/xsimd/LICENSE (installed as fxtranslate/xsimd-LICENSE.txt).
+
 Bundled egui font icons
 
 The pinned egui dependency includes egui-icons.ttf, a small subset of John Slegers'

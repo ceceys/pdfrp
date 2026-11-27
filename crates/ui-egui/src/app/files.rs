@@ -92,7 +92,11 @@ impl MigezApp {
         // Files opened before the first frame (the ones named at startup) are drawn once, in the
         // interface language, rather than in English and again when the frame applies it.
         self.apply_status_captions(i18n::Lang::from_pref(&self.language));
-        // Images and text files become new, unsaved PDFs (Create a PDF).
+        // Images and text files become new, unsaved PDFs (Create a PDF). Pdfrp: a UDF file with
+        // an electronic signature asks first (`Dialog::UdfSigned`), and is converted after.
+        if self.hold_signed_udf(name, path.as_deref(), &bytes, None) {
+            return Ok(());
+        }
         let active = self.active;
         if let Some(r) = self.open_converted(name, &bytes) {
             if r.is_ok() {
@@ -251,6 +255,8 @@ impl MigezApp {
             open_worker::ResultKind::Failed(reason) => {
                 self.notify_fmt("Couldn't open {name}: {reason}", &[("name", &pending.name), ("reason", &reason)]);
             }
+            // Pdfrp: a UDF file with an electronic signature asks first, and is converted after.
+            open_worker::ResultKind::Conversion(bytes) if self.hold_signed_udf(&pending.name, pending.path.as_deref(), &bytes, pending.then) => {}
             open_worker::ResultKind::Conversion(bytes) => match self.open_converted(&pending.name, &bytes) {
                 Some(Ok(())) => {
                     self.remember_converted_from(pending.path.as_deref());
@@ -1046,6 +1052,9 @@ impl MigezApp {
         let mut filters = vec![("PDF".to_string(), vec!["pdf"]), (tl!("Images").to_string(), migez_engine::IMAGE_EXTENSIONS.to_vec())];
         #[cfg(not(target_arch = "wasm32"))]
         filters.push((tl!("Office documents").to_string(), migez_engine::OFFICE_EXTENSIONS.to_vec()));
+        // Pdfrp: UDF files open as new PDFs, converted here. Named as the legal review put it:
+        // the files the UYAP Document Editor uses, nothing more (no "UYAP compatible").
+        filters.push((tl!("UDF files used by the UYAP Document Editor").to_string(), migez_engine::UDF_EXTENSIONS.to_vec()));
         filters.push((tl!("Text").to_string(), migez_engine::TEXT_EXTENSIONS.to_vec()));
         #[cfg(not(any(target_arch = "wasm32", target_os = "macos")))]
         filters.push((tl!("All files").to_string(), vec!["*"]));

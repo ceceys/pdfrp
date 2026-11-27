@@ -164,7 +164,7 @@ fn check(h: &Harness<'static, MigezApp>, name: &str) -> Result<(), String> {
 }
 
 /// Every panel, in the order of the rail.
-const ALL: [RightPanel; 11] = [
+const ALL: [RightPanel; 12] = [
     RightPanel::Comments,
     RightPanel::Bookmarks,
     RightPanel::Pages,
@@ -176,6 +176,7 @@ const ALL: [RightPanel; 11] = [
     RightPanel::Tags,
     RightPanel::Search,
     RightPanel::Compare,
+    RightPanel::Translate,
 ];
 
 /// Opens `p` with something in it and names its snapshot. No wildcard on purpose: a new
@@ -190,6 +191,8 @@ fn open(p: RightPanel) -> (Harness<'static, MigezApp>, &'static str) {
         RightPanel::Attachments => "attachments",
         RightPanel::Signatures => "signatures",
         RightPanel::Tags => "tags",
+        // Pdfrp 1.2.0: no translation set up here (the languages, the text box, the note).
+        RightPanel::Translate => "translate",
         RightPanel::Accessibility => {
             let mut h = harness("none");
             assert!(h.state_mut().execute("a11y.check"));
