@@ -15,7 +15,7 @@
 </h3>
 
 <p align="center">
-  Pdfrp 1.2.0 · Windows 10 ve 11, 64 bit · yaklaşık 33 MB<br>
+  Pdfrp 1.2.0 · Windows 10 ve 11, 64 bit · yaklaşık 25 MB<br>
   macOS ve Linux sürümleri de eklenecektir.<br>
   <a href="https://github.com/ceceys/pdfrp/releases">Tüm sürümler</a> · <a href="#kurulum">Kurulum</a> · <a href="#english">English</a>
 </p>
@@ -211,7 +211,7 @@ endorsed or supported by the Ministry.
   this repository's `vendor/fxtranslate` folder. Pdfrp is not officially associated with Mozilla
   or its products and is not endorsed by Mozilla.
 - **Download:** [Pdfrp 1.2.0 installer](https://github.com/ceceys/pdfrp/releases/download/v1.2.0/Pdfrp.Kurulum.1.2.0.exe)
-  (Windows 10 or 11, 64-bit, about 33 MB). The installed app finds later versions by itself.
+  (Windows 10 or 11, 64-bit, about 25 MB). The installed app finds later versions by itself.
   macOS and Linux versions will be added.
 - **Install:** all versions are on [Releases](https://github.com/ceceys/pdfrp/releases). The release page shows
   `Pdfrp Kurulum X.Y.Z.exe`; the file you download may be named
